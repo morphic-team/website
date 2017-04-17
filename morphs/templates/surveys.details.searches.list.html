@@ -1,0 +1,31 @@
+<br>
+<p>An <b>important</b> first step is to install the morphic Chrome extension <a href="https://chrome.google.com/webstore/detail/fhigbmfhhlpkjbdamhjmfajhkfbkkgah">available here</a>.</p>
+
+<div class="alert alert-danger" role="alert">
+  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+  <span class="sr-only">Error:</span>
+  If you are taken to a country specific version of Google Images - for example 'https://google.co.za' - after clicking the link, please manually edit the address to start with 'https://google.com'.
+</div>
+
+<button class="btn btn-primary" style="margin-bottom: 10px" ng-click="$state.go('surveys.details.searches.create')">
+    <span class="glyphicon glyphicon-plus" aria-hidden="true" style="padding-right:4px"></span> Add search
+</button>
+<table class="table table-hover table-bordered">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Search Query</th>
+        <th>Comments</th>
+        <th>Action</th>
+    </tr>
+    <tr ng-repeat="search in ctrl.searches">
+        <td>{{search.id_}}</td>
+        <td>{{search.name}}</td>
+        <td>{{search.search_query}}</td>
+        <td>{{search.comments}}</td>
+        <td>
+            <span ng-show="search.are_results_uploaded" class="label label-success">Successfully ran search</span>
+            <button ng-show="!search.are_results_uploaded" ng-click="ctrl.run_search(search)" class="btn btn-xs btn-primary">Run search</button>
+        </td>
+    </tr>
+</table>
