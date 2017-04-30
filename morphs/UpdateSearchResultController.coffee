@@ -15,7 +15,7 @@ morphs.controller 'UpdateSearchResultController', class SearchResultController
     $scope.ctrl = @
     @survey = {}
     @search_result = {}
-    @saving = false 
+    @saving = false
 
     @SurveysService.get_survey(@$stateParams.survey_id)
       .then (survey) =>
@@ -62,10 +62,20 @@ morphs.controller 'UpdateSearchResultController', class SearchResultController
     return @$stateParams.search_result_id > 0
 
   next: =>
-    @$state.go 'surveys.details.search-results.details', {search_result_id: parseInt(@$stateParams.search_result_id) + 1}
+    @$state.go(
+      'surveys.details.search-results.details',
+      {
+        search_result_id: @search_result.next_id,
+      }
+    )
 
   previous: =>
-    @$state.go 'surveys.details.search-results.details', {search_result_id: parseInt(@$stateParams.search_result_id) - 1}
+    @$state.go(
+      'surveys.details.search-results.details',
+      {
+        search_result_id: @search_result.previous_id,
+      }
+    )
 
   done_and_next: =>
     @update_search_result 'DONE'

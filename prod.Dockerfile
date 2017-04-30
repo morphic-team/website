@@ -16,6 +16,6 @@ RUN bower install
 
 COPY . ./
 RUN grunt
-COPY ./ops/development/settings.js ./build/settings.js
+COPY ./ops/production/settings.js ./build/settings.js
 
 CMD http-server
