@@ -11,13 +11,13 @@ morphs = window.angular.module 'morphs', [
 
 HEADER_NAME = 'Morphs-Handle-Errors-Generically';
 specificallyHandleInProgress = false;
- 
+
 morphs.factory 'RequestsErrorHandler', ($q, $log, $injector) ->
   # The user's API for claiming responsibility for requests
   specificallyHandled: (specificallyHandledBlock) ->
     specificallyHandleInProgress = true
     try return specificallyHandledBlock() finally specificallyHandleInProgress = false
- 
+
   # Response interceptor for handling errors generically
   responseError: (rejection) ->
     shouldHandle = rejection and rejection.config and rejection.config.headers and rejection.config.headers[HEADER_NAME]
@@ -26,7 +26,7 @@ morphs.factory 'RequestsErrorHandler', ($q, $log, $injector) ->
       notify "Something went wrong with your request, please try again or contact support."
 
     return $q.reject(rejection);
- 
+
 morphs.config ($provide, $httpProvider) ->
     $httpProvider.interceptors.push 'RequestsErrorHandler'
 
@@ -34,23 +34,23 @@ morphs.config ($provide, $httpProvider) ->
     addHeaderToConfig = (config) ->
         config = config or {}
         config.headers = config.headers or {}
- 
+
         # Add the header unless user asked to handle errors himself
         if  !specificallyHandleInProgress
             config.headers[HEADER_NAME] = true
- 
+
         return config
 
     # The rest here is mostly boilerplate needed to decorate $http safely
-    $provide.decorator '$http', ($delegate) -> 
+    $provide.decorator '$http', ($delegate) ->
         decorateRegularCall = (method) ->
             return (url, config) ->
                 return $delegate[method] url, addHeaderToConfig config
- 
+
         decorateDataCall = (method) ->
             return (url, data, config) ->
                 return $delegate[method](url, data, addHeaderToConfig(config));
- 
+
         copyNotOverriddenAttributes = (newHttp) ->
             for attr in $delegate
                 if  !newHttp.hasOwnProperty attr
@@ -59,25 +59,25 @@ morphs.config ($provide, $httpProvider) ->
                             return $delegate.apply $delegate, arguments
                     else
                         newHttp[attr] = $delegate[attr];
- 
+
         newHttp = (config) ->
             return $delegate addHeaderToConfig config;
- 
+
         newHttp.get = decorateRegularCall 'get'
         newHttp.delete = decorateRegularCall 'delete'
         newHttp.head = decorateRegularCall 'head'
         newHttp.jsonp = decorateRegularCall 'jsonp'
         newHttp.post = decorateDataCall 'post'
         newHttp.put = decorateDataCall 'put'
- 
+
         copyNotOverriddenAttributes newHttp
- 
+
         return newHttp;
- 
+
 
 morphs.config (uiGmapGoogleMapApiProvider) ->
   uiGmapGoogleMapApiProvider.configure {
-    #key: 'your api key',
+    key: 'AIzaSyDf9HG--5bdFUPkBvCfaeyq2QhH_1HGTwU',
     v: '3.17',
     libraries: 'places,geometry'
   }
@@ -202,7 +202,7 @@ morphs.run ($rootScope, $state, $log, UserService, notify) ->
     $log.debug "Attempting to change state to '#{toState.name}'."
     if (toState.is_private and not UserService.is_signed_in())
       notify 'Please sign in.'
-      $log.debug "State '#{toState.name} is private and user is not signed in, 
+      $log.debug "State '#{toState.name} is private and user is not signed in,
       going to 'sign-in' instead."
       # Prevent the existing state change so that we can start a new one.
       event.preventDefault()
