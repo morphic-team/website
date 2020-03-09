@@ -55,10 +55,9 @@ morphs.controller 'MapController', class MapController
     , true
 
     @$scope.$watch 'searchResult.field_values', =>
-      if searchResult.field_values
+      if searchResult.field_values && searchResult.field_values[label]
         coords = JSON.parse searchResult.field_values[label]
         @marker.coords = coords
     , true
 
     @searchResult = searchResult
-
