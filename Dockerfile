@@ -1,9 +1,8 @@
-FROM digitallyseamless/nodejs-bower-grunt
-MAINTAINER avoid3d@gmail.com
+FROM node:current
 
 EXPOSE 8080
 
-RUN npm install -g http-server
+RUN npm install -g bower grunt-cli http-server
 
 WORKDIR /usr/src/app
 
