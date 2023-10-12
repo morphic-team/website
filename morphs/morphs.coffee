@@ -107,8 +107,15 @@ morphs.config ($stateProvider, $urlRouterProvider) ->
   $stateProvider.state 'instructions', {
     url: '/instructions'
     templateUrl: 'morphs/templates/instructions.html'
-    is_private: true
+    is_private: false
   }
+
+  $stateProvider.state 'privacy', {
+    url: '/privacy'
+    templateUrl: 'morphs/templates/privacy.html'
+    is_private: false
+  }
+
 
   $stateProvider.state 'surveys', {
     url: '/surveys'

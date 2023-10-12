@@ -1,4 +1,18 @@
-FROM node:current
+#
+# Node.js w/ Bower & Grunt Dockerfile
+#
+# https://github.com/digitallyseamless/docker-nodejs-bower-grunt
+#
+
+# Pull base image.
+FROM node:20-bookworm-slim
+
+# Install Git (which is needed by bower)
+RUN apt-get update && apt-get install -y git
+
+# Install Bower & Grunt
+RUN npm install -g bower grunt-cli && \
+    echo '{ "allow_root": true }' > /root/.bowerrc
 
 EXPOSE 8080
 
