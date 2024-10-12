@@ -1,0 +1,32 @@
+<div class="container-fluid">
+  <form (ngSubmit)="filterSearchResults()">
+    <div class="form-group">
+      <input type="text" [(ngModel)]="filter" name="filter" class="form-control" placeholder="Filter" />
+    </div>
+  </form>
+
+  <pagination-controls 
+    (pageChange)="pageChanged()" 
+    [id]="'searchResults'" 
+    [maxSize]="5"
+    [directionLinks]="true"
+    [autoHide]="true">
+  </pagination-controls>
+
+  <table class="table table-hover table-bordered">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Visible Link</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let searchResult of searchResults" 
+          [routerLink]="['/surveys', surveyId, 'search-results', searchResult.id]"
+          style="cursor: pointer">
+        <td>{{ searchResult.id }}</td>
+        <td>{{ searchResult.visible_link }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

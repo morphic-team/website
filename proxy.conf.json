@@ -1,0 +1,8 @@
+{
+    "/api": {
+      "target": "https://morphs.io/",
+      "secure": true,
+      "changeOrigin": true,
+      "logLevel": "debug"
+    }
+  }

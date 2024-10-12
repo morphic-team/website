@@ -1,34 +1,41 @@
-#
-# Node.js w/ Bower & Grunt Dockerfile
-#
-# https://github.com/digitallyseamless/docker-nodejs-bower-grunt
-#
+# Base image: Use a lightweight Debian image
+FROM debian:bookworm-slim
 
-# Pull base image.
-FROM node:20-bookworm-slim
+# Set the environment variables to non-interactive for apt-get
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Install Git (which is needed by bower)
-RUN apt-get update && apt-get install -y git
+# Install dependencies: curl, git, and any build dependencies you might need
+RUN apt-get update && \
+    apt-get install -y \
+    ca-certificates \
+    curl \
+    && apt-get clean
 
-# Install Bower & Grunt
-RUN npm install -g bower grunt-cli && \
-    echo '{ "allow_root": true }' > /root/.bowerrc
+# Install Node.js (current stable version, e.g., 20.x)
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g npm
 
-EXPOSE 8080
-
-RUN npm install -g bower grunt-cli http-server
-
+# Create and set the working directory
 WORKDIR /usr/src/app
 
-COPY package.json ./
+# Install global Angular CLI
+RUN npm install -g @angular/cli
+
+# Copy package.json and package-lock.json into the container
+COPY package.json package-lock.json ./
+
+# Install project dependencies
 RUN npm install
 
-COPY bower.json ./
-ENV GIT_DIR=.
-RUN bower install
+# Copy the rest of the application files
+COPY . .
 
-COPY . ./
-RUN grunt
-COPY ./ops/development/settings.js ./build/settings.js
+# Disable Angular analytics
+RUN ng analytics off
 
-CMD http-server
+# Expose the default Angular port
+EXPOSE 4200
+
+# Command to run the Angular development server
+CMD ["npm", "start"]

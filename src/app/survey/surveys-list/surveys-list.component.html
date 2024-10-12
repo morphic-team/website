@@ -1,0 +1,22 @@
+<div class="container-fluid">
+  <div class="panel panel-default">
+    <div class="panel-heading">Surveys</div>
+    <div class="panel-body">
+      <button (click)="createSurvey()" class="btn btn-primary">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true" style="padding-right:4px"></span>
+        Create new survey
+      </button>
+    </div>
+    <table class="table table-hover">
+      <tr>
+        <th>Name</th>
+        <th>Comments</th>
+      </tr>
+      <!-- Loop over surveys and display them -->
+      <tr *ngFor="let survey of surveys$ | async" (click)="goToSurveyDetails(survey.id)" style="cursor: pointer;">
+        <td>{{ survey.name }}</td>
+        <td>{{ survey.comments }}</td>
+      </tr>
+    </table>
+  </div>
+</div>
