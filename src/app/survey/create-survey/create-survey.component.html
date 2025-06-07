@@ -1,0 +1,29 @@
+<div class="container">
+  <div class="col-md-6 offset-md-3">
+    <h1>Create New Survey</h1>
+    
+    <div class="alert alert-danger" role="alert" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <form (ngSubmit)="createSurvey()">
+      <div class="form-group">
+        <label class="control-label" for="nameInput">Survey Name</label>
+        <input [(ngModel)]="name" name="name" type="text" class="form-control" id="nameInput" placeholder="Enter survey name" required [disabled]="isSubmitting">
+      </div>
+
+      <div class="form-group">
+        <label class="control-label" for="commentsInput">Comments (optional)</label>
+        <textarea [(ngModel)]="comments" name="comments" class="form-control" id="commentsInput" rows="3" placeholder="Add any additional notes or description" [disabled]="isSubmitting"></textarea>
+      </div>
+
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary" [disabled]="isSubmitting">
+          <span *ngIf="isSubmitting">Creating...</span>
+          <span *ngIf="!isSubmitting">Create Survey</span>
+        </button>
+        <button type="button" class="btn btn-secondary ms-2" (click)="cancel()" [disabled]="isSubmitting">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
