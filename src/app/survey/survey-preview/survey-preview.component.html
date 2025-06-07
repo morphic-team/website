@@ -1,0 +1,77 @@
+<div class="survey-preview">
+  <div *ngIf="survey.fields.length === 0" class="text-muted text-center p-4">
+    <em>No fields added yet. Add some fields to see the preview.</em>
+  </div>
+
+  <form *ngIf="survey.fields.length > 0">
+    <div *ngFor="let field of survey.fields" class="mb-3">
+      <label [for]="field.id" class="form-label">
+        {{ field.label }}
+        <span *ngIf="field.required" class="text-danger">*</span>
+      </label>
+
+      <!-- Text Field -->
+      <input *ngIf="field.fieldType === 'text'" 
+             type="text" 
+             class="form-control" 
+             [id]="field.id"
+             [(ngModel)]="previewValues[field.id]"
+             [name]="field.id"
+             [required]="!!field.required"
+             placeholder="Enter text here"
+             disabled>
+
+      <!-- Select Field -->
+      <select *ngIf="field.fieldType === 'select'" 
+              class="form-control" 
+              [id]="field.id"
+              [(ngModel)]="previewValues[field.id]"
+              [name]="field.id"
+              [required]="!!field.required"
+              disabled>
+        <option value="">-- Select an option --</option>
+        <option *ngFor="let option of getOptionsArray(field)" [value]="option">
+          {{ option }}
+        </option>
+      </select>
+
+      <!-- Radio Field -->
+      <div *ngIf="field.fieldType === 'radio'" class="form-group">
+        <div *ngFor="let option of getOptionsArray(field); let i = index" class="form-check">
+          <input type="radio" 
+                 class="form-check-input" 
+                 [id]="field.id + '_' + i"
+                 [name]="field.id"
+                 [value]="option"
+                 [(ngModel)]="previewValues[field.id]"
+                 [required]="!!field.required"
+                 disabled>
+          <label class="form-check-label" [for]="field.id + '_' + i">
+            {{ option }}
+          </label>
+        </div>
+      </div>
+
+      <!-- Location Field -->
+      <div *ngIf="field.fieldType === 'location'" class="form-group">
+        <input type="text" 
+               class="form-control" 
+               [id]="field.id"
+               [(ngModel)]="previewValues[field.id]"
+               [name]="field.id"
+               [required]="!!field.required"
+               placeholder="Enter location coordinates or description"
+               disabled>
+        <small class="form-text text-muted">Location field for geographic data</small>
+      </div>
+
+    </div>
+
+    <div class="mt-4 p-3 bg-light border rounded">
+      <small class="text-muted">
+        <strong>Preview Mode:</strong> This is how the survey will appear to users. 
+        Fields are disabled in preview mode.
+      </small>
+    </div>
+  </form>
+</div>

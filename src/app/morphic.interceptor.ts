@@ -6,7 +6,16 @@ import { map } from 'rxjs/operators';
 @Injectable()
 export class MorphicInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    return next.handle(req).pipe(
+    // Transform request body from camelCase to snake_case
+    let transformedReq = req;
+    if (req.body && typeof req.body === 'object') {
+      const transformedBody = this.transformRequestBody(req.body);
+      transformedReq = req.clone({
+        body: transformedBody
+      });
+    }
+
+    return next.handle(transformedReq).pipe(
       map(event => {
         if (event instanceof HttpResponse) {
           // Transform response data to match frontend conventions
@@ -51,5 +60,32 @@ export class MorphicInterceptor implements HttpInterceptor {
 
   private toCamelCase(str: string): string {
     return str.replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
+  }
+
+  private transformRequestBody(obj: any): any {
+    if (Array.isArray(obj)) {
+      return obj.map(item => this.transformRequestBody(item));
+    } else if (obj !== null && typeof obj === 'object') {
+      const newObj: any = {};
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          const transformedKey = this.toSnakeCase(key);
+          // Recursively transform nested objects/arrays
+          newObj[transformedKey] = this.transformRequestBody(obj[key]);
+        }
+      }
+      return newObj;
+    }
+    return obj;
+  }
+
+  private toSnakeCase(str: string): string {
+    // Handle special case: id should become id_ for backend
+    if (str === 'id') {
+      return 'id_';
+    }
+    
+    // Convert camelCase to snake_case
+    return str.replace(/([A-Z])/g, (match, letter) => '_' + letter.toLowerCase());
   }
 }

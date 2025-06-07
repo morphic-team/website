@@ -1,0 +1,82 @@
+<div class="survey-builder">
+        
+        <!-- Existing Fields List -->
+        <div class="mb-4" *ngIf="survey.fields.length > 0">
+          <h5>Survey Fields</h5>
+          <div class="list-group">
+            <div *ngFor="let field of survey.fields; let i = index" class="list-group-item">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                  <h6 class="mb-1">{{ field.label }}</h6>
+                  <small class="text-muted">
+                    Type: {{ field.fieldType }}
+                    <span *ngIf="field.required" class="text-danger ms-2">*Required</span>
+                  </small>
+                  <div *ngIf="field.options" class="mt-1">
+                    <small class="text-muted">Options: {{ field.options }}</small>
+                  </div>
+                </div>
+                <div class="btn-group-vertical btn-group-sm">
+                  <button type="button" class="btn btn-outline-secondary" (click)="moveFieldUp(i)" [disabled]="i === 0">
+                    ↑
+                  </button>
+                  <button type="button" class="btn btn-outline-secondary" (click)="moveFieldDown(i)" [disabled]="i === survey.fields.length - 1">
+                    ↓
+                  </button>
+                  <button type="button" class="btn btn-outline-danger" (click)="removeField(i)">
+                    ×
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Field Button -->
+        <div class="mb-3">
+          <button type="button" class="btn btn-primary" (click)="toggleAddFieldForm()">
+            <span *ngIf="!showAddFieldForm">+ Add Field</span>
+            <span *ngIf="showAddFieldForm">Cancel</span>
+          </button>
+        </div>
+
+        <!-- Add Field Form -->
+        <div *ngIf="showAddFieldForm" class="card bg-light">
+          <div class="card-body">
+            <h6>Add New Field</h6>
+            
+            <div class="mb-3">
+              <label for="fieldLabel" class="form-label">Field Label</label>
+              <input type="text" class="form-control" id="fieldLabel" 
+                     [(ngModel)]="addFieldForm.label" 
+                     placeholder="Enter field label">
+            </div>
+
+            <div class="mb-3">
+              <label for="fieldType" class="form-label">Field Type</label>
+              <select class="form-control" id="fieldType" [(ngModel)]="addFieldForm.fieldType">
+                <option *ngFor="let type of fieldTypes" [ngValue]="type">{{ type.label }}</option>
+              </select>
+            </div>
+
+            <div class="mb-3" *ngIf="requiresOptions(addFieldForm.fieldType)">
+              <label for="fieldOptions" class="form-label">Options</label>
+              <input type="text" class="form-control" id="fieldOptions" 
+                     [(ngModel)]="addFieldForm.options" 
+                     placeholder="Enter options separated by commas">
+              <small class="form-text text-muted">Example: Option 1, Option 2, Option 3</small>
+            </div>
+
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="fieldRequired" 
+                     [(ngModel)]="addFieldForm.required">
+              <label class="form-check-label" for="fieldRequired">Required field</label>
+            </div>
+
+            <button type="button" class="btn btn-success" (click)="addField()" [disabled]="!addFieldForm.label.trim()">
+              Add Field
+            </button>
+          </div>
+        </div>
+
+</div>

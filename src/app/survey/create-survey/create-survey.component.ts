@@ -3,40 +3,59 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SurveysService } from '../services/surveys.service';
+import { Survey } from '../models/survey.model';
+import { SurveyBuilderComponent } from '../survey-builder/survey-builder.component';
+import { SurveyPreviewComponent } from '../survey-preview/survey-preview.component';
 
 @Component({
   selector: 'app-create-survey',
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, SurveyBuilderComponent, SurveyPreviewComponent],
   templateUrl: './create-survey.component.html',
   styleUrls: ['./create-survey.component.css']
 })
 export class CreateSurveyComponent {
-  name = '';
-  comments = '';
+  survey: Survey = {
+    name: '',
+    comments: '',
+    fields: [],
+    isMutable: true
+  };
+  
   errorMessage = '';
   isSubmitting = false;
 
   constructor(private surveysService: SurveysService, private router: Router) {}
 
+  onSurveyChange(updatedSurvey: Survey) {
+    this.survey = { ...updatedSurvey };
+  }
+
   createSurvey() {
     this.errorMessage = '';
     
     // Basic validation
-    if (!this.name.trim()) {
+    if (!this.survey.name.trim()) {
       this.errorMessage = 'Survey name is required.';
       return;
     }
 
-    if (this.name.trim().length < 3) {
+    if (this.survey.name.trim().length < 3) {
       this.errorMessage = 'Survey name must be at least 3 characters long.';
+      return;
+    }
+
+    if (this.survey.fields.length === 0) {
+      this.errorMessage = 'Please add at least one field to the survey.';
       return;
     }
 
     this.isSubmitting = true;
 
+    // Prepare survey data for API
     const surveyData = {
-      name: this.name.trim(),
-      comments: this.comments.trim()
+      name: this.survey.name.trim(),
+      comments: this.survey.comments.trim(),
+      fields: this.survey.fields
     };
 
     this.surveysService.createSurvey(surveyData).subscribe({
