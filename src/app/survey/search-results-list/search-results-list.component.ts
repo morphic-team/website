@@ -7,11 +7,10 @@ import { TagResponse } from '../models/tag-response.model'; // Import the new mo
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-search-results-list',
-  standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, NgxPaginationModule], // Add NgxPaginationModule here
-  templateUrl: './search-results-list.component.html',
-  styleUrls: ['./search-results-list.component.css'] // Adjust if necessary
+    selector: 'app-search-results-list',
+    imports: [CommonModule, RouterModule, FormsModule, NgxPaginationModule], // Add NgxPaginationModule here
+    templateUrl: './search-results-list.component.html',
+    styleUrls: ['./search-results-list.component.css'] // Adjust if necessary
 })
 export class SearchResultsListComponent implements OnInit {
   tags: string[] = [];

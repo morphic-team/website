@@ -7,11 +7,10 @@ import { RouterModule } from '@angular/router';
 
 
 @Component({
-  selector: 'app-survey-detail',
-  standalone: true,
-  imports: [CommonModule, RouterModule],
-  templateUrl: './survey-detail.component.html',
-  styleUrls: ['./survey-detail.component.css'] // Adjust if necessary
+    selector: 'app-survey-detail',
+    imports: [CommonModule, RouterModule],
+    templateUrl: './survey-detail.component.html',
+    styleUrls: ['./survey-detail.component.css'] // Adjust if necessary
 })
 export class SurveyDetailComponent implements OnInit {
   survey$: Observable<any> | null = null;  // Observable for the survey data

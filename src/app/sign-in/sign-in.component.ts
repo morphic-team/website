@@ -5,11 +5,10 @@ import { CommonModule } from '@angular/common';
 import { UserService } from '../services/user.service';
 
 @Component({
-  selector: 'app-sign-in',
-  standalone: true,  // Standalone component
-  imports: [CommonModule, FormsModule],  // Make sure FormsModule is imported
-  templateUrl: './sign-in.component.html',
-  styleUrls: ['./sign-in.component.css']
+    selector: 'app-sign-in', // Standalone component
+    imports: [CommonModule, FormsModule], // Make sure FormsModule is imported
+    templateUrl: './sign-in.component.html',
+    styleUrls: ['./sign-in.component.css']
 })
 export class SignInComponent {
   email = '';

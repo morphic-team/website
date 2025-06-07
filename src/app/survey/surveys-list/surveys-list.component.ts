@@ -5,11 +5,10 @@ import { SurveysService } from '../services/surveys.service'; // Adjust path as 
 import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-survey-list',
-  standalone: true,
-  imports: [CommonModule, RouterModule], // Import necessary modules for *ngFor, routing
-  templateUrl: './surveys-list.component.html',
-  styleUrls: ['./surveys-list.component.css'] // Corrected from 'styleUrl' to 'styleUrls'
+    selector: 'app-survey-list',
+    imports: [CommonModule, RouterModule], // Import necessary modules for *ngFor, routing
+    templateUrl: './surveys-list.component.html',
+    styleUrls: ['./surveys-list.component.css'] // Corrected from 'styleUrl' to 'styleUrls'
 })
 export class SurveyListComponent implements OnInit {
   surveys$: Observable<any[]> | null = null;  // Initialize with null
