@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +14,8 @@ export class UserService {
   // BehaviorSubject to allow reactive access to user state
   private userSubject = new BehaviorSubject<any>(null);
 
-  constructor(private http: HttpClient) {
-    this.loadFromLocalStorage();
+  constructor(private http: HttpClient, private storageService: StorageService) {
+    this.loadFromStorage();
   }
 
   // Observable to allow components to reactively subscribe to user state
@@ -34,7 +35,7 @@ export class UserService {
         tap((response: any) => {
           this.session = response.session;
           this.user = response.user;
-          this.persistToLocalStorage();
+          this.persistToStorage();
           this.userSubject.next(this.user); // Update the observable
         })
       );
@@ -47,7 +48,7 @@ export class UserService {
         tap((response: any) => {
           this.session = response.session;
           this.user = response.user;
-          this.persistToLocalStorage();
+          this.persistToStorage();
           this.userSubject.next(this.user); // Update the observable
         })
       );
@@ -57,26 +58,24 @@ export class UserService {
   signOut(): void {
     this.user = null;
     this.session = null;
-    localStorage.removeItem('session_and_user');
+    this.storageService.clearSessionAndUser();
     this.userSubject.next(null); // Update the observable
   }
 
-  // Persists the session and user to localStorage
-  private persistToLocalStorage(): void {
-    const sessionAndUser = {
+  // Persists the session and user to storage
+  private persistToStorage(): void {
+    this.storageService.setSessionAndUser({
       session: this.session,
       user: this.user
-    };
-    localStorage.setItem('session_and_user', JSON.stringify(sessionAndUser));
+    });
   }
 
-  // Loads the session and user from localStorage (if available)
-  private loadFromLocalStorage(): void {
-    const storedSessionAndUser = localStorage.getItem('session_and_user');
-    if (storedSessionAndUser) {
-      const parsedData = JSON.parse(storedSessionAndUser);
-      this.session = parsedData.session;
-      this.user = parsedData.user;
+  // Loads the session and user from storage (if available)
+  private loadFromStorage(): void {
+    const data = this.storageService.getSessionAndUser();
+    if (data) {
+      this.session = data.session;
+      this.user = data.user;
       this.userSubject.next(this.user); // Update the observable
     }
   }
