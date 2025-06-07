@@ -5,6 +5,6 @@ export interface TagResponse {
   }
   
   export interface Tag {
-    search_result_id: number;
+    searchResultId: number;
     value: string;
   }
