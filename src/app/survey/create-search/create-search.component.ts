@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { SearchesService, CreateSearchRequest } from '../services/searches.service';
 
 @Component({
   selector: 'app-create-search',
@@ -20,7 +20,7 @@ export class CreateSearchComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private http: HttpClient
+    private searchesService: SearchesService
   ) {
     this.searchForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(1)]],
@@ -41,9 +41,9 @@ export class CreateSearchComponent implements OnInit {
       this.isSubmitting = true;
       this.submitError = null;
 
-      const formData = this.searchForm.value;
+      const formData: CreateSearchRequest = this.searchForm.value;
       
-      this.http.post(`/api/surveys/${this.surveyId}/searches`, formData)
+      this.searchesService.createSearch(this.surveyId, formData)
         .subscribe({
           next: (response) => {
             this.router.navigate(['../'], { relativeTo: this.route });

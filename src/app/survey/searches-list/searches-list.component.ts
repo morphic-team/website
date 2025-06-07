@@ -1,16 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { SurveysService } from '../services/surveys.service';
-import { HttpClient } from '@angular/common/http';
-
-interface Search {
-  id_: number;
-  name: string;
-  search_query: string;
-  comments: string;
-  are_results_uploaded: boolean;
-}
+import { SearchesService, Search } from '../services/searches.service';
 
 @Component({
     selector: 'app-searches-list',
@@ -24,7 +15,7 @@ export class SearchesListComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private http: HttpClient
+    private searchesService: SearchesService
   ) {}
 
   ngOnInit(): void {
@@ -36,17 +27,19 @@ export class SearchesListComponent implements OnInit {
 
   fetchSearches(): void {
     if (this.surveyId) {
-      this.http.get<{results: Search[]}>(`/api/surveys/${this.surveyId}/searches`)
-        .subscribe(response => {
-          this.searches = response.results;
+      this.searchesService.getSearches(this.surveyId)
+        .subscribe({
+          next: (response) => {
+            this.searches = response.results;
+          },
+          error: (error) => {
+            console.error('Error fetching searches:', error);
+          }
         });
     }
   }
 
   runSearch(search: Search): void {
-    const queryString = encodeURIComponent(search.search_query);
-    const morphicId = search.id_;
-    const url = `https://www.google.com/search?q=${queryString}&fg=1&tbm=isch&tbs=itp:photo,morphic_id:${morphicId}`;
-    window.open(url, '_blank');
+    this.searchesService.runSearch(search);
   }
 }
