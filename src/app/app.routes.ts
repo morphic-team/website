@@ -12,6 +12,7 @@ import { SearchResultDetailComponent } from './survey/search-result-detail/searc
 import { ExportResultsComponent } from './survey/export-results/export-results.component';
 import { SearchesListComponent } from './survey/searches-list/searches-list.component';
 import { CreateSurveyComponent } from './survey/create-survey/create-survey.component';
+import { CreateSearchComponent } from './survey/create-search/create-search.component';
 
 export const routes: Routes = [
   { path: 'instructions', component: InstructionsComponent },
@@ -53,6 +54,11 @@ export const routes: Routes = [
       {
         path: 'searches',
         component: SearchesListComponent,
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'searches/create',
+        component: CreateSearchComponent,
         canActivate: [AuthGuard]
       }
     ]
