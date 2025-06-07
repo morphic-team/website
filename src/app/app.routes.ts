@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { InstructionsComponent } from './instructions/instructions.component';
 import { PrivacyComponent } from './privacy/privacy.component';
 import { SignInComponent } from './sign-in/sign-in.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { AuthGuard } from './auth.guard';
 import { SurveyListComponent } from './survey/surveys-list/surveys-list.component';
 import { SurveyDetailComponent } from './survey/survey-detail/survey-detail.component';
@@ -14,6 +15,7 @@ export const routes: Routes = [
   { path: 'instructions', component: InstructionsComponent },
   { path: 'privacy', component: PrivacyComponent },
   { path: 'sign-in', component: SignInComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
 
   { 
     path: 'surveys', 

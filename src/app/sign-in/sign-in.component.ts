@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../services/user.service';
 
 @Component({
     selector: 'app-sign-in', // Standalone component
-    imports: [CommonModule, FormsModule], // Make sure FormsModule is imported
+    imports: [CommonModule, FormsModule, RouterModule], // Add RouterModule for routerLink
     templateUrl: './sign-in.component.html',
     styleUrls: ['./sign-in.component.css']
 })
