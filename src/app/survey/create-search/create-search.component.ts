@@ -24,7 +24,7 @@ export class CreateSearchComponent implements OnInit {
   ) {
     this.searchForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(1)]],
-      search_query: ['', [Validators.required, Validators.minLength(1)]],
+      searchQuery: ['', [Validators.required, Validators.minLength(1)]],
       comments: ['']
     });
   }

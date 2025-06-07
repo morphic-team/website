@@ -32,16 +32,16 @@
       </thead>
       <tbody>
         <tr *ngFor="let search of searches">
-          <td>{{ search.id_ }}</td>
+          <td>{{ search.id }}</td>
           <td>{{ search.name }}</td>
-          <td>{{ search.search_query }}</td>
+          <td>{{ search.searchQuery }}</td>
           <td>{{ search.comments }}</td>
           <td>
             <span 
-              *ngIf="search.are_results_uploaded" 
+              *ngIf="search.areResultsUploaded" 
               class="badge bg-success">Successfully ran search</span>
             <button 
-              *ngIf="!search.are_results_uploaded" 
+              *ngIf="!search.areResultsUploaded" 
               (click)="runSearch(search)" 
               class="btn btn-sm btn-primary">Run search</button>
           </td>

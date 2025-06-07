@@ -24,19 +24,19 @@
 
             <!-- Search Query -->
             <div class="mb-3">
-              <label for="search_query" class="form-label">Search Query <span class="text-danger">*</span></label>
+              <label for="searchQuery" class="form-label">Search Query <span class="text-danger">*</span></label>
               <input 
                 type="text" 
-                id="search_query"
+                id="searchQuery"
                 class="form-control"
-                [class.is-invalid]="getFieldError('search_query')"
-                formControlName="search_query"
+                [class.is-invalid]="getFieldError('searchQuery')"
+                formControlName="searchQuery"
                 placeholder="Enter your Google Images search query">
               <div class="form-text">
                 This will be used to search Google Images. Example: "red cars", "mountain landscapes", etc.
               </div>
-              <div class="invalid-feedback" *ngIf="getFieldError('search_query')">
-                {{ getFieldError('search_query') }}
+              <div class="invalid-feedback" *ngIf="getFieldError('searchQuery')">
+                {{ getFieldError('searchQuery') }}
               </div>
             </div>
 

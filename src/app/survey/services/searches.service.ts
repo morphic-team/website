@@ -3,11 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Search {
-  id_: number;
+  id: number;
   name: string;
-  search_query: string;
+  searchQuery: string;
   comments: string;
-  are_results_uploaded: boolean;
+  areResultsUploaded: boolean;
 }
 
 export interface SearchesResponse {
@@ -17,7 +17,7 @@ export interface SearchesResponse {
 
 export interface CreateSearchRequest {
   name: string;
-  search_query: string;
+  searchQuery: string;
   comments?: string;
 }
 
@@ -44,8 +44,8 @@ export class SearchesService {
 
   // Helper method to generate Google Images search URL
   generateSearchUrl(search: Search): string {
-    const queryString = encodeURIComponent(search.search_query);
-    const morphicId = search.id_;
+    const queryString = encodeURIComponent(search.searchQuery);
+    const morphicId = search.id;
     return `https://www.google.com/search?q=${queryString}&fg=1&tbm=isch&tbs=itp:photo,morphic_id:${morphicId}`;
   }
 
