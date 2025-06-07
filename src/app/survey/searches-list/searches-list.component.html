@@ -1,1 +1,56 @@
-<p>searches-list works!</p>
+<div class="container-fluid">
+  <div class="mb-3">
+    <p class="alert alert-info mb-3">
+      <strong>Important:</strong> An <strong>important</strong> first step is to install the morphic Chrome extension 
+      <a href="https://chrome.google.com/webstore/detail/fhigbmfhhlpkjbdamhjmfajhkfbkkgah" target="_blank">available here</a>.
+    </p>
+
+    <div class="alert alert-danger" role="alert">
+      <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+      <strong>Error:</strong>
+      If you are taken to a country specific version of Google Images - for example 'https://google.co.za' - after clicking the link, 
+      please manually edit the address to start with 'https://google.com'.
+    </div>
+
+    <button 
+      class="btn btn-primary mb-3" 
+      [routerLink]="['/surveys', surveyId, 'searches', 'create']">
+      <i class="bi bi-plus" aria-hidden="true"></i> Add search
+    </button>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Search Query</th>
+          <th>Comments</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let search of searches">
+          <td>{{ search.id_ }}</td>
+          <td>{{ search.name }}</td>
+          <td>{{ search.search_query }}</td>
+          <td>{{ search.comments }}</td>
+          <td>
+            <span 
+              *ngIf="search.are_results_uploaded" 
+              class="badge bg-success">Successfully ran search</span>
+            <button 
+              *ngIf="!search.are_results_uploaded" 
+              (click)="runSearch(search)" 
+              class="btn btn-sm btn-primary">Run search</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="searches.length === 0" class="text-center text-muted py-4">
+    <p>No searches found. <a [routerLink]="['/surveys', surveyId, 'searches', 'create']">Add your first search</a>.</p>
+  </div>
+</div>
