@@ -18,6 +18,9 @@ export class NavbarComponent {
   constructor(private userService: UserService, private router: Router) {
     // Subscribe to user state
     this.user$ = this.userService.getUser();
+    this.user$.subscribe(user => {
+      console.log('Current user:', user);
+    });
   }
 
   // Sign out the user and navigate to the sign-in page

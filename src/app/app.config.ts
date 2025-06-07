@@ -2,7 +2,7 @@ import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
-import { IdInterceptor } from './id.interceptor';  // Adjust the path as necessary
+import { MorphicInterceptor } from './morphic.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -10,10 +10,10 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi()),
 
-    // Register the IdInterceptor
+    // Register the MorphicInterceptor
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: IdInterceptor,
+      useClass: MorphicInterceptor,
       multi: true,
     }
   ]
