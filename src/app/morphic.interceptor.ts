@@ -18,6 +18,11 @@ export class MorphicInterceptor implements HttpInterceptor {
     return next.handle(transformedReq).pipe(
       map(event => {
         if (event instanceof HttpResponse) {
+          // Skip transformation for blob responses (file downloads)
+          if (event.body instanceof Blob) {
+            return event;
+          }
+          
           // Transform response data to match frontend conventions
           if (event.body) {
             const transformedBody = this.transformApiResponse(event.body);
