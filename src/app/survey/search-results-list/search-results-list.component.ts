@@ -86,4 +86,24 @@ export class SearchResultsListComponent implements OnInit {
       this.router.navigate(['/surveys', this.surveyId, 'search-results', 'page', page]);
     }
   }
+
+  getProcessingStatusText(imageScrapedState: string): string {
+    switch (imageScrapedState) {
+      case 'NEW': return 'Pending';
+      case 'STARTED': return 'Processing...';
+      case 'SUCCESS': return 'Processed';
+      case 'FAILURE': return 'Failed';
+      default: return 'Unknown';
+    }
+  }
+
+  getProcessingBadgeClass(imageScrapedState: string): string {
+    switch (imageScrapedState) {
+      case 'NEW': return 'bg-secondary';
+      case 'STARTED': return 'bg-info';
+      case 'SUCCESS': return 'bg-success';
+      case 'FAILURE': return 'bg-danger';
+      default: return 'bg-light';
+    }
+  }
 }

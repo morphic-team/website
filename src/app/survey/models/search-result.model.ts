@@ -9,7 +9,10 @@ export interface SearchResult {
   visibleLink: string;
   directLink: string;
   completionState: string;
+  duplicateOfId: number | null;
+  imageScrapedState: string;
   tags: Tag[];
+  duplicates: SearchResult[];
   fieldValues?: Record<string, any>;
   search?: any;
 }

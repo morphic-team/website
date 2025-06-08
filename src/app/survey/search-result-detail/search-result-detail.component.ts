@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SearchResultsService } from '../services/search-results.service';
@@ -10,7 +10,7 @@ import { SearchResultFormControlsComponent } from '../search-result-form-control
 
 @Component({
     selector: 'app-search-result-detail',
-    imports: [CommonModule, FormsModule, SurveyFormComponent, SearchResultFormControlsComponent],
+    imports: [CommonModule, FormsModule, RouterModule, SurveyFormComponent, SearchResultFormControlsComponent],
     templateUrl: './search-result-detail.component.html',
     styleUrl: './search-result-detail.component.css'
 })
@@ -383,6 +383,26 @@ export class SearchResultDetailComponent implements OnInit {
     } catch {
       // Fallback for invalid URLs
       return url.length > 50 ? url.substring(0, 47) + '...' : url;
+    }
+  }
+
+  getProcessingStatusText(imageScrapedState: string): string {
+    switch (imageScrapedState) {
+      case 'NEW': return 'Pending';
+      case 'STARTED': return 'Processing...';
+      case 'SUCCESS': return 'Processed';
+      case 'FAILURE': return 'Failed';
+      default: return 'Unknown';
+    }
+  }
+
+  getProcessingBadgeClass(imageScrapedState: string): string {
+    switch (imageScrapedState) {
+      case 'NEW': return 'bg-secondary';
+      case 'STARTED': return 'bg-info';
+      case 'SUCCESS': return 'bg-success';
+      case 'FAILURE': return 'bg-danger';
+      default: return 'bg-light';
     }
   }
 }

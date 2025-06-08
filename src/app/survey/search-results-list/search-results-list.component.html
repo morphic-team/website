@@ -19,6 +19,7 @@
         <th>ID</th>
         <th>Visible Link</th>
         <th>Status</th>
+        <th>Processing</th>
       </tr>
     </thead>
     <tbody>
@@ -40,6 +41,14 @@
                   'bg-danger': searchResult.completionState === 'NOT_USABLE'
                 }">
             {{ searchResult.completionState }}
+          </span>
+          <span *ngIf="searchResult.duplicateOfId" class="ms-2 text-muted small">
+            Duplicate of #{{ searchResult.duplicateOfId }}
+          </span>
+        </td>
+        <td>
+          <span class="badge" [ngClass]="getProcessingBadgeClass(searchResult.imageScrapedState)">
+            {{ getProcessingStatusText(searchResult.imageScrapedState) }}
           </span>
         </td>
       </tr>
