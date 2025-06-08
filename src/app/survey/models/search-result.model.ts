@@ -12,7 +12,7 @@ export interface SearchResult {
   duplicateOfId: number | null;
   imageScrapedState: string;
   tags: Tag[];
-  duplicates: SearchResult[];
+  duplicatePool: SearchResult[];
   fieldValues?: Record<string, any>;
   search?: any;
 }

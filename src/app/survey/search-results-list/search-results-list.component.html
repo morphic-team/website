@@ -25,11 +25,13 @@
     <tbody>
       <tr *ngFor="let searchResult of searchResults | paginate: { id: 'searchResults', itemsPerPage: perPage, currentPage: currentPage, totalItems: totalSearchResults }" 
           [routerLink]="['/surveys', surveyId, 'search-results', 'page', currentPage, 'result', searchResult.id]"
+          [attr.data-result-id]="searchResult.id"
           style="cursor: pointer"
           [ngClass]="{
             'table-success': searchResult.completionState === 'DONE',
             'table-warning': searchResult.completionState === 'REVISIT',
-            'table-danger': searchResult.completionState === 'NOT_USABLE'
+            'table-danger': searchResult.completionState === 'NOT_USABLE',
+            'table-info': searchResult.id === highlightResultId
           }">
         <td>{{ searchResult.id }}</td>
         <td>{{ searchResult.visibleLink }}</td>
@@ -42,8 +44,13 @@
                 }">
             {{ searchResult.completionState }}
           </span>
-          <span *ngIf="searchResult.duplicateOfId" class="ms-2 text-muted small">
-            Duplicate of #{{ searchResult.duplicateOfId }}
+          <span *ngIf="searchResult.duplicateOfId" class="ms-2 small">
+            <a [routerLink]="['/surveys', surveyId, 'search-results', 'page', currentPage, 'result', searchResult.duplicateOfId]" 
+               [queryParams]="{ returnPage: currentPage, returnResult: searchResult.id }"
+               class="text-decoration-none link-primary"
+               (click)="$event.stopPropagation()">
+              Duplicate of #{{ searchResult.duplicateOfId }}
+            </a>
           </span>
         </td>
         <td>

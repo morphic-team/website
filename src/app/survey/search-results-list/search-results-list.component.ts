@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { SearchResultsService } from '../services/search-results.service'; // Adjust the path as necessary
 import { FormsModule } from '@angular/forms'; // Import FormsModule
@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
     templateUrl: './search-results-list.component.html',
     styleUrls: ['./search-results-list.component.css'] // Adjust if necessary
 })
-export class SearchResultsListComponent implements OnInit {
+export class SearchResultsListComponent implements OnInit, AfterViewInit {
   tags: string[] = [];
   searchResults: SearchResult[] = [];
   filter: string = '';
@@ -21,6 +21,7 @@ export class SearchResultsListComponent implements OnInit {
   perPage: number = 60;
   totalSearchResults: number = 0; // Initialize total search results
   surveyId: string | null = null; // Store the survey ID
+  highlightResultId: number | null = null; // Result ID to highlight
 
   constructor(
     private route: ActivatedRoute,
@@ -44,6 +45,12 @@ export class SearchResultsListComponent implements OnInit {
         console.error('Survey ID not found in route parameters');
       }
     });
+    
+    // Subscribe to query parameter changes to handle highlighting
+    this.route.queryParamMap.subscribe(queryParams => {
+      const highlightParam = queryParams.get('highlight');
+      this.highlightResultId = highlightParam ? Number(highlightParam) : null;
+    });
   }
 
   fetchTags(): void {
@@ -65,6 +72,8 @@ export class SearchResultsListComponent implements OnInit {
         next: (response) => {
           this.searchResults = response.results;
           this.totalSearchResults = response.count;
+          // Scroll to highlighted result after data loads
+          setTimeout(() => this.scrollToHighlightedResult(), 100);
         },
         error: (error) => {
           console.error('Error fetching search results:', error);
@@ -104,6 +113,23 @@ export class SearchResultsListComponent implements OnInit {
       case 'SUCCESS': return 'bg-success';
       case 'FAILURE': return 'bg-danger';
       default: return 'bg-light';
+    }
+  }
+
+  ngAfterViewInit(): void {
+    // Initial scroll after view is fully initialized
+    setTimeout(() => this.scrollToHighlightedResult(), 200);
+  }
+
+  private scrollToHighlightedResult(): void {
+    if (this.highlightResultId) {
+      const highlightedRow = document.querySelector(`tr[data-result-id="${this.highlightResultId}"]`);
+      if (highlightedRow) {
+        highlightedRow.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        });
+      }
     }
   }
 }

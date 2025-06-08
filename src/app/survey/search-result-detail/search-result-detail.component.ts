@@ -39,6 +39,10 @@ export class SearchResultDetailComponent implements OnInit {
   totalResults: number = 0;
   perPage: number = 60;
   
+  // Return context for back navigation
+  returnPage: number | null = null;
+  returnResultId: number | null = null;
+  
   // Image loading state
   imageLoaded: boolean = false;
   imageError: boolean = false;
@@ -67,6 +71,14 @@ export class SearchResultDetailComponent implements OnInit {
         this.error = 'Missing survey ID or result ID';
         this.loading = false;
       }
+    });
+    
+    // Subscribe to query parameter changes to capture return context
+    this.route.queryParamMap.subscribe(queryParams => {
+      const returnPageParam = queryParams.get('returnPage');
+      const returnResultParam = queryParams.get('returnResult');
+      this.returnPage = returnPageParam ? Number(returnPageParam) : null;
+      this.returnResultId = returnResultParam ? Number(returnResultParam) : null;
     });
   }
 
@@ -281,7 +293,13 @@ export class SearchResultDetailComponent implements OnInit {
     if (!this.confirmNavigation()) return;
     
     if (this.surveyId) {
-      this.router.navigate(['/surveys', this.surveyId, 'search-results', 'page', this.currentPage]);
+      // Use return context if available, otherwise use current context
+      const targetPage = this.returnPage || this.currentPage;
+      const highlightResult = this.returnResultId || this.resultId;
+      
+      this.router.navigate(['/surveys', this.surveyId, 'search-results', 'page', targetPage], {
+        queryParams: { highlight: highlightResult }
+      });
     }
   }
 
@@ -324,10 +342,18 @@ export class SearchResultDetailComponent implements OnInit {
   }
 
   get hasPrevious(): boolean {
+    // Disable navigation when in return context (viewing via duplicate link)
+    if (this.returnPage !== null || this.returnResultId !== null) {
+      return false;
+    }
     return this.currentIndex > 0 || this.currentPage > 1;
   }
 
   get hasNext(): boolean {
+    // Disable navigation when in return context (viewing via duplicate link)
+    if (this.returnPage !== null || this.returnResultId !== null) {
+      return false;
+    }
     return this.currentIndex < this.pageResults.length - 1 || this.hasMorePages();
   }
 

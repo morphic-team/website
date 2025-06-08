@@ -75,24 +75,29 @@
             <h6 class="card-title mb-0">Duplicate Pool</h6>
           </div>
           <div class="card-body">
-            <div *ngIf="searchResult.duplicates && searchResult.duplicates.length > 0">
-              <p class="text-muted small mb-2">The following results were identified as duplicates of this image:</p>
+            <div *ngIf="searchResult.duplicatePool && searchResult.duplicatePool.length > 1">
+              <p class="text-muted small mb-2">All results identified as the same image ({{ searchResult.duplicatePool.length }} total):</p>
               <ul class="list-unstyled mb-0">
-                <li *ngFor="let duplicate of searchResult.duplicates" class="mb-1">
+                <li *ngFor="let duplicate of searchResult.duplicatePool" class="mb-1">
                   <a [routerLink]="['/surveys', surveyId, 'search-results', 'page', currentPage, 'result', duplicate.id]" 
-                     class="text-decoration-none">
+                     [queryParams]="duplicate.id !== searchResult.id ? { returnPage: (returnPage || currentPage), returnResult: (returnResultId || searchResult.id) } : {}"
+                     class="text-decoration-none"
+                     [ngClass]="{'fw-bold': duplicate.id === searchResult.id}">
                     #{{ duplicate.id }}
                   </a>
+                  <span *ngIf="duplicate.id === searchResult.id" class="badge bg-primary ms-1 small">current</span>
+                  <span *ngIf="!duplicate.duplicateOfId" class="badge bg-success ms-1 small">canonical</span>
+                  <span *ngIf="duplicate.duplicateOfId && duplicate.id !== searchResult.id" class="badge bg-secondary ms-1 small">duplicate</span>
                   <span class="text-muted small ms-2">
                     - {{ getDisplayUrl(duplicate.visibleLink) }}
                   </span>
                 </li>
               </ul>
             </div>
-            <div *ngIf="!searchResult.duplicates || searchResult.duplicates.length === 0">
+            <div *ngIf="!searchResult.duplicatePool || searchResult.duplicatePool.length <= 1">
               <p class="text-muted small mb-0">
-                No duplicates found. When the background processor identifies images with identical content, 
-                they will be listed here and marked as NOT_USABLE.
+                Unique image. When the background processor identifies images with identical content, 
+                all matching results will be listed here.
               </p>
             </div>
           </div>
@@ -137,7 +142,8 @@
               </span>
               <span *ngIf="searchResult.duplicateOfId" class="ms-2">
                 <a [routerLink]="['/surveys', surveyId, 'search-results', 'page', currentPage, 'result', searchResult.duplicateOfId]" 
-                   class="text-decoration-none">
+                   [queryParams]="{ returnPage: (returnPage || currentPage), returnResult: (returnResultId || searchResult.id) }"
+                   class="text-decoration-none link-primary">
                   Duplicate of #{{ searchResult.duplicateOfId }}
                 </a>
               </span>
