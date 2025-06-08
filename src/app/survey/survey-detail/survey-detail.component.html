@@ -1,19 +1,23 @@
 <div class="container-fluid">
-    <div class="panel panel-default" *ngIf="survey$ | async as survey">
-      <div class="panel-heading">{{ survey.name }} ({{ survey.id }})</div>
-      <div class="panel-body">
+    <div class="card" *ngIf="survey$ | async as survey">
+      <div class="card-header">
+        <h5 class="mb-0">{{ survey.name }} ({{ survey.id }})</h5>
+      </div>
+      <div class="card-body p-0">
         <ul class="nav nav-tabs">
-          <li role="presentation" routerLinkActive="active">
-            <a [routerLink]="['/surveys', survey.id, 'search-results']">Search Results</a>
+          <li class="nav-item">
+            <a class="nav-link" [routerLink]="['/surveys', survey.id, 'search-results']" routerLinkActive="active">Search Results</a>
           </li>
-          <li role="presentation" routerLinkActive="active">
-            <a [routerLink]="['/surveys', survey.id, 'searches']">Searches</a>
+          <li class="nav-item">
+            <a class="nav-link" [routerLink]="['/surveys', survey.id, 'searches']" routerLinkActive="active">Searches</a>
           </li>
-          <li role="presentation" routerLinkActive="active">
-            <a [routerLink]="['/surveys', survey.id, 'export-results']">Export Results</a>
+          <li class="nav-item">
+            <a class="nav-link" [routerLink]="['/surveys', survey.id, 'export-results']" routerLinkActive="active">Export Results</a>
           </li>
         </ul>
-        <router-outlet></router-outlet>  <!-- Placeholder for nested routes -->
+        <div class="p-3">
+          <router-outlet></router-outlet>  <!-- Placeholder for nested routes -->
+        </div>
       </div>
     </div>
   </div>

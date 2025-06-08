@@ -2,19 +2,23 @@
     <div class="col-md-6 offset-md-3">
       <h1>Please sign in</h1>
       <form (ngSubmit)="signIn()">
-        <div class="form-group">
-          <label class="control-label" for="emailInput">Email address</label>
+        <div class="mb-3">
+          <label class="form-label" for="emailInput">Email address</label>
           <input [(ngModel)]="email" name="email" type="email" class="form-control" id="emailInput" placeholder="Enter your email address" required>
         </div>
   
-        <div class="form-group">
-          <label class="control-label" for="passwordInput">Password</label>
-          <a class="pull-right" routerLink="/forgot-password">Forgot your password?</a>
+        <div class="mb-3">
+          <div class="d-flex justify-content-between">
+            <label class="form-label" for="passwordInput">Password</label>
+            <a routerLink="/forgot-password">Forgot your password?</a>
+          </div>
           <input [(ngModel)]="password" name="password" type="password" class="form-control" id="passwordInput" placeholder="Enter your password" required>
         </div>
   
-        <button type="submit" class="btn btn-primary pull-right">Sign in</button>
-        <a routerLink="/sign-up">Don't have an account?</a>
+        <div class="d-flex justify-content-between align-items-center">
+          <a routerLink="/sign-up">Don't have an account?</a>
+          <button type="submit" class="btn btn-primary">Sign in</button>
+        </div>
       </form>
     </div>
   </div>

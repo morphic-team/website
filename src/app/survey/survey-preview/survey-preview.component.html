@@ -36,7 +36,7 @@
       </select>
 
       <!-- Radio Field -->
-      <div *ngIf="field.fieldType === 'radio'" class="form-group">
+      <div *ngIf="field.fieldType === 'radio'" class="mb-3">
         <div *ngFor="let option of getOptionsArray(field); let i = index" class="form-check">
           <input type="radio" 
                  class="form-check-input" 
@@ -53,7 +53,7 @@
       </div>
 
       <!-- Location Field -->
-      <div *ngIf="field.fieldType === 'location'" class="form-group">
+      <div *ngIf="field.fieldType === 'location'" class="mb-3">
         <app-location-picker
           [options]="{
             height: '250px',

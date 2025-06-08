@@ -14,13 +14,13 @@
           <h4>Survey Information</h4>
         </div>
         <div class="card-body">
-          <div class="form-group mb-3">
-            <label class="control-label" for="nameInput">Survey Name</label>
+          <div class="mb-3">
+            <label class="form-label" for="nameInput">Survey Name</label>
             <input [(ngModel)]="survey.name" name="name" type="text" class="form-control" id="nameInput" placeholder="Enter survey name" required [disabled]="isSubmitting">
           </div>
 
-          <div class="form-group mb-3">
-            <label class="control-label" for="commentsInput">Comments (optional)</label>
+          <div class="mb-3">
+            <label class="form-label" for="commentsInput">Comments (optional)</label>
             <textarea [(ngModel)]="survey.comments" name="comments" class="form-control" id="commentsInput" rows="3" placeholder="Add any additional notes or description" [disabled]="isSubmitting"></textarea>
           </div>
         </div>
@@ -37,12 +37,12 @@
       </div>
 
       <!-- Action Buttons -->
-      <div class="form-group">
+      <div class="d-flex gap-2">
         <button type="button" class="btn btn-primary" (click)="createSurvey()" [disabled]="isSubmitting">
           <span *ngIf="isSubmitting">Creating...</span>
           <span *ngIf="!isSubmitting">Create Survey</span>
         </button>
-        <button type="button" class="btn btn-secondary ms-2" (click)="cancel()" [disabled]="isSubmitting">Cancel</button>
+        <button type="button" class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting">Cancel</button>
       </div>
     </div>
 

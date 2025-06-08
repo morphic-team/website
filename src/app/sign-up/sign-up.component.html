@@ -7,23 +7,25 @@
     </div>
 
     <form (ngSubmit)="signUp()">
-      <div class="form-group">
-        <label class="control-label" for="emailInput">Email address</label>
+      <div class="mb-3">
+        <label class="form-label" for="emailInput">Email address</label>
         <input [(ngModel)]="email" name="email" type="email" class="form-control" id="emailInput" placeholder="Enter your email address" required>
       </div>
 
-      <div class="form-group">
-        <label class="control-label" for="passwordInput">Password</label>
+      <div class="mb-3">
+        <label class="form-label" for="passwordInput">Password</label>
         <input [(ngModel)]="password" name="password" type="password" class="form-control" id="passwordInput" placeholder="Enter your password (min. 6 characters)" required>
       </div>
 
-      <div class="form-group">
-        <label class="control-label" for="confirmPasswordInput">Confirm Password</label>
+      <div class="mb-3">
+        <label class="form-label" for="confirmPasswordInput">Confirm Password</label>
         <input [(ngModel)]="confirmPassword" name="confirmPassword" type="password" class="form-control" id="confirmPasswordInput" placeholder="Confirm your password" required>
       </div>
 
-      <button type="submit" class="btn btn-primary pull-right">Sign up</button>
-      <a routerLink="/sign-in">Already have an account?</a>
+      <div class="d-flex justify-content-between align-items-center">
+        <a routerLink="/sign-in">Already have an account?</a>
+        <button type="submit" class="btn btn-primary">Sign up</button>
+      </div>
     </form>
   </div>
 </div>

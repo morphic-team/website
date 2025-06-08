@@ -1,22 +1,30 @@
 <div class="container-fluid">
-  <div class="panel panel-default">
-    <div class="panel-heading">Surveys</div>
-    <div class="panel-body">
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0">Surveys</h5>
+    </div>
+    <div class="card-body">
       <button (click)="createSurvey()" class="btn btn-primary">
-        <span class="glyphicon glyphicon-plus" aria-hidden="true" style="padding-right:4px"></span>
+        <i class="bi bi-plus" aria-hidden="true"></i>
         Create new survey
       </button>
     </div>
-    <table class="table table-hover">
-      <tr>
-        <th>Name</th>
-        <th>Comments</th>
-      </tr>
-      <!-- Loop over surveys and display them -->
-      <tr *ngFor="let survey of surveys$ | async" (click)="goToSurveyDetails(survey.id)" style="cursor: pointer;">
-        <td>{{ survey.name }}</td>
-        <td>{{ survey.comments }}</td>
-      </tr>
-    </table>
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Comments</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Loop over surveys and display them -->
+          <tr *ngFor="let survey of surveys$ | async" (click)="goToSurveyDetails(survey.id)" style="cursor: pointer;">
+            <td>{{ survey.name }}</td>
+            <td>{{ survey.comments }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
