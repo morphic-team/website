@@ -13,21 +13,63 @@
 
   <!-- Main Content -->
   <div *ngIf="!loading && !error && searchResult && survey">
-    <!-- Header with navigation -->
+    <!-- Header with omnibus navigation and actions -->
     <div class="d-flex justify-content-between align-items-center mb-4">
+      <button type="button" class="btn btn-outline-secondary" (click)="goBackToResults()">
+        ← Back to Results
+      </button>
+      <h2 class="mb-0">Search Result {{ searchResult.id }}</h2>
       <div class="d-flex align-items-center gap-2">
-        <button type="button" class="btn btn-outline-secondary" (click)="goBackToResults()">
-          ← Back to Results
-        </button>
-        <button type="button" class="btn btn-outline-primary" (click)="goToPrevious()" [disabled]="!hasPrevious || saving">
+        <button type="button" 
+                class="btn btn-outline-primary btn-sm" 
+                (click)="goToPrevious()" 
+                [disabled]="!hasPrevious || saving"
+                title="Navigate to previous search result">
           ← Previous
         </button>
-        <button type="button" class="btn btn-outline-primary" (click)="goToNext()" [disabled]="!hasNext || saving">
+        <button type="button" 
+                class="btn btn-secondary btn-sm" 
+                (click)="revertChanges()" 
+                [disabled]="!hasUnsavedChanges || saving"
+                title="Discard all unsaved changes">
+          Revert Changes
+        </button>
+        <button type="button" 
+                class="btn btn-primary btn-sm" 
+                (click)="saveForm()" 
+                [disabled]="!hasUnsavedChanges || saving"
+                title="Save form data and completion state">
+          {{ saving ? 'Saving...' : 'Save Changes' }}
+        </button>
+        <button type="button" 
+                class="btn btn-danger btn-sm" 
+                (click)="saveAndNext('NOT_USABLE')" 
+                [disabled]="!hasNext || saving"
+                title="Set completion state to not usable, save changes and navigate to next result">
+          {{ saving ? 'Saving...' : 'Not Usable & Next' }}
+        </button>
+        <button type="button" 
+                class="btn btn-warning btn-sm" 
+                (click)="saveAndNext('REVISIT')" 
+                [disabled]="!hasNext || saving"
+                title="Set completion state to revisit, save changes and navigate to next result">
+          {{ saving ? 'Saving...' : 'Revisit & Next' }}
+        </button>
+        <button type="button" 
+                class="btn btn-success btn-sm" 
+                (click)="saveAndNext('DONE')" 
+                [disabled]="!hasNext || saving"
+                title="Set completion state to done, save changes and navigate to next result">
+          {{ saving ? 'Saving...' : 'Done & Next' }}
+        </button>
+        <button type="button" 
+                class="btn btn-outline-primary btn-sm" 
+                (click)="goToNext()" 
+                [disabled]="!hasNext || saving"
+                title="Navigate to next search result">
           Next →
         </button>
       </div>
-      <h2 class="mb-0">Search Result {{ searchResult.id }}</h2>
-      <div></div> <!-- Spacer for flexbox alignment -->
     </div>
 
     <div class="row">
@@ -176,16 +218,6 @@
                 </span>
               </div>
             </div>
-            
-            <!-- Form action controls -->
-            <app-search-result-form-controls
-              [hasUnsavedChanges]="hasUnsavedChanges"
-              [saving]="saving"
-              [hasNext]="hasNext"
-              (revertChanges)="revertChanges()"
-              (saveForm)="saveForm()"
-              (saveAndNext)="saveAndNext($event)">
-            </app-search-result-form-controls>
           </div>
           <div class="card-body">
             <!-- Completion State Selector -->
@@ -217,18 +249,6 @@
               (formSubmit)="onFormSubmit($event)"
               (fieldChange)="onFieldChange($event)">
             </app-survey-form>
-          </div>
-          
-          <!-- Form action controls (repeated at bottom) -->
-          <div class="card-footer">
-            <app-search-result-form-controls
-              [hasUnsavedChanges]="hasUnsavedChanges"
-              [saving]="saving"
-              [hasNext]="hasNext"
-              (revertChanges)="revertChanges()"
-              (saveForm)="saveForm()"
-              (saveAndNext)="saveAndNext($event)">
-            </app-search-result-form-controls>
           </div>
         </div>
       </div>
