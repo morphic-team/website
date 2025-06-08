@@ -23,9 +23,11 @@ export class SurveyFormComponent implements OnInit {
   @Input() disabled: boolean = false;
   @Input() showSubmitButton: boolean = true;
   @Input() submitButtonText: string = 'Submit';
+  @Input() changedFields: Set<string> = new Set();
 
   @Output() formSubmit = new EventEmitter<{ [fieldId: string]: any }>();
   @Output() formChange = new EventEmitter<{ [fieldId: string]: any }>();
+  @Output() fieldChange = new EventEmitter<{ fieldId: string, value: any, allValues: { [fieldId: string]: any } }>();
 
   formValues: { [fieldId: string]: any } = {};
 
@@ -44,8 +46,30 @@ export class SurveyFormComponent implements OnInit {
     this.formChange.emit({ ...this.formValues });
   }
 
+  onFieldValueChange(field: SurveyField, value: any) {
+    const fieldId = this.getFieldKey(field);
+    this.formValues[fieldId] = value;
+    this.fieldChange.emit({ 
+      fieldId, 
+      value, 
+      allValues: { ...this.formValues } 
+    });
+    this.onFormValueChange();
+  }
+
   onSubmit() {
     this.formSubmit.emit({ ...this.formValues });
+  }
+
+  isFieldChanged(field: SurveyField): boolean {
+    const fieldId = this.getFieldKey(field);
+    return this.changedFields.has(fieldId);
+  }
+
+  resetForm() {
+    // Reset form values back to initial values
+    this.formValues = { ...this.initialValues };
+    this.onFormValueChange();
   }
 
   getOptionsArray(field: any): string[] {

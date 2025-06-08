@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -14,6 +14,8 @@ import { SurveyFormComponent } from '../survey-form/survey-form.component';
     styleUrl: './search-result-detail.component.css'
 })
 export class SearchResultDetailComponent implements OnInit {
+  @ViewChild(SurveyFormComponent) surveyFormComponent!: SurveyFormComponent;
+  
   surveyId: string | null = null;
   resultId: string | null = null;
   searchResult: any = null;
@@ -23,6 +25,12 @@ export class SearchResultDetailComponent implements OnInit {
   error: string | null = null;
   currentPage: number = 1;
   selectedCompletionState: string | null = null;
+  
+  // Unsaved changes tracking
+  hasUnsavedChanges: boolean = false;
+  originalFormValues: { [fieldId: string]: any } = {};
+  originalCompletionState: string | null = null;
+  changedFields: Set<string> = new Set();
   
   // Navigation context
   pageResults: any[] = [];
@@ -74,6 +82,12 @@ export class SearchResultDetailComponent implements OnInit {
       
       // Initialize completion state from loaded data
       this.selectedCompletionState = searchResult.completionState;
+      this.originalCompletionState = searchResult.completionState;
+      
+      // Store original form values for change tracking
+      this.originalFormValues = { ...this.getInitialFormValues() };
+      this.hasUnsavedChanges = false;
+      this.changedFields.clear();
       
       // Find current result's index in the page
       this.currentIndex = this.pageResults.findIndex(r => r.id === Number(this.resultId));
@@ -84,6 +98,54 @@ export class SearchResultDetailComponent implements OnInit {
       this.error = 'Failed to load data';
       this.loading = false;
     });
+  }
+
+  onFieldChange(event: { fieldId: string, value: any, allValues: { [fieldId: string]: any } }) {
+    // Check if this specific field has changed from its original value
+    const originalValue = this.originalFormValues[event.fieldId];
+    const hasChanged = JSON.stringify(event.value) !== JSON.stringify(originalValue);
+    
+    if (hasChanged) {
+      this.changedFields.add(event.fieldId);
+    } else {
+      this.changedFields.delete(event.fieldId);
+    }
+    
+    this.updateUnsavedChangesStatus();
+  }
+
+  onCompletionStateChange() {
+    this.updateUnsavedChangesStatus();
+  }
+
+  private updateUnsavedChangesStatus() {
+    // Check completion state changes
+    const stateChanged = this.selectedCompletionState !== this.originalCompletionState;
+    
+    // Overall unsaved changes = any field changed OR completion state changed
+    this.hasUnsavedChanges = this.changedFields.size > 0 || stateChanged;
+  }
+
+  revertChanges() {
+    // Revert completion state
+    this.selectedCompletionState = this.originalCompletionState;
+    
+    // Clear changed fields tracking
+    this.changedFields.clear();
+    
+    // Reset the survey form to original values
+    if (this.surveyFormComponent) {
+      this.surveyFormComponent.resetForm();
+    }
+    
+    // Update the unsaved changes status
+    this.updateUnsavedChangesStatus();
+  }
+
+  private confirmNavigation(): boolean {
+    if (!this.hasUnsavedChanges) return true;
+    
+    return confirm('You have unsaved changes. Are you sure you want to leave this page?');
   }
 
   onFormSubmit(formValues: { [fieldId: string]: any }) {
@@ -101,7 +163,12 @@ export class SearchResultDetailComponent implements OnInit {
       next: (updatedResult) => {
         this.searchResult = updatedResult;
         this.saving = false;
-        // Optionally navigate back or show success message
+        
+        // Reset unsaved changes tracking after successful save
+        this.originalFormValues = { ...formValues };
+        this.originalCompletionState = this.selectedCompletionState;
+        this.changedFields.clear();
+        this.hasUnsavedChanges = false;
       },
       error: (error) => {
         console.error('Error saving form:', error);
@@ -112,12 +179,15 @@ export class SearchResultDetailComponent implements OnInit {
   }
 
   goBackToResults() {
+    if (!this.confirmNavigation()) return;
+    
     if (this.surveyId) {
       this.router.navigate(['/surveys', this.surveyId, 'search-results', 'page', this.currentPage]);
     }
   }
 
   goToPrevious() {
+    if (!this.confirmNavigation()) return;
     if (!this.surveyId) return;
 
     if (this.currentIndex > 0) {
@@ -136,6 +206,7 @@ export class SearchResultDetailComponent implements OnInit {
   }
 
   goToNext() {
+    if (!this.confirmNavigation()) return;
     if (!this.surveyId) return;
 
     if (this.currentIndex < this.pageResults.length - 1) {

@@ -1,0 +1,15 @@
+/* Unsaved changes visual indicators */
+.unsaved-changes {
+  background-color: #fff9e6;
+  border: 2px solid #ffc107;
+}
+
+.changed-field {
+  border-color: #ffc107 !important;
+  box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+}
+
+.changed-field:focus {
+  border-color: #ffc107 !important;
+  box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
+}

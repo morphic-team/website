@@ -17,3 +17,14 @@
 .btn:disabled {
   cursor: not-allowed;
 }
+
+/* Changed field indicators */
+.changed-field {
+  border-color: #ffc107 !important;
+  box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+}
+
+.changed-field:focus {
+  border-color: #ffc107 !important;
+  box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
+}
