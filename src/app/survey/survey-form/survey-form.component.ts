@@ -36,6 +36,10 @@ export class SurveyFormComponent implements OnInit {
     this.formValues = { ...this.initialValues };
   }
 
+  getSortedFields(): SurveyField[] {
+    return [...this.survey.fields].sort((a, b) => a.order - b.order);
+  }
+
   onFormValueChange() {
     this.formChange.emit({ ...this.formValues });
   }

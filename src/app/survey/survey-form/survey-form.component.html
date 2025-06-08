@@ -4,7 +4,7 @@
   </div>
 
   <form *ngIf="survey.fields.length > 0" (ngSubmit)="onSubmit()">
-    <div *ngFor="let field of survey.fields; let i = index" class="mb-3">
+    <div *ngFor="let field of getSortedFields(); let i = index" class="mb-3">
       <label [for]="'field_' + i" class="form-label">
         {{ field.label }}
         <span *ngIf="field.required" class="text-danger">*</span>
