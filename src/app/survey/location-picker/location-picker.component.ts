@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, AfterViewIni
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import * as L from 'leaflet';
+import 'leaflet-control-geocoder';
 import { LocationData, LocationPickerOptions } from '../models/location.model';
 
 // Fix for default marker icons in Leaflet
@@ -71,6 +72,26 @@ export class LocationPickerComponent implements OnInit, AfterViewInit, OnDestroy
       maxZoom: 18,
       attribution: '© OpenStreetMap contributors'
     }).addTo(this.map);
+
+    // Add geocoder search control (if not disabled)
+    if (!this.disabled) {
+      const geocoder = (L.Control as any).geocoder({
+        defaultMarkGeocode: false,
+        placeholder: 'Search for a location or enter coordinates...',
+        errorMessage: 'No location found',
+        showResultIcons: true,
+        suggestMinLength: 3,
+        suggestTimeout: 250,
+        queryMinLength: 1
+      }).on('markgeocode', (e: any) => {
+        // Handle geocoder result selection
+        const latlng = e.geocode.center;
+        this.setLocation({
+          latitude: latlng.lat,
+          longitude: latlng.lng
+        });
+      }).addTo(this.map);
+    }
 
     // Add click handler for map
     if (!this.disabled) {
