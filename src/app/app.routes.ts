@@ -37,14 +37,22 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       {
-        path: 'search-results',
+        path: 'search-results/page/:page',
         component: SearchResultsListComponent,
         canActivate: [AuthGuard]
       },
       {
-        path: 'search-results/:resultId',
+        path: 'search-results',
+        redirectTo: 'search-results/page/1'
+      },
+      {
+        path: 'search-results/page/:page/result/:resultId',
         component: SearchResultDetailComponent,
         canActivate: [AuthGuard]
+      },
+      {
+        path: 'search-results/:resultId',
+        redirectTo: 'search-results/page/1/result/:resultId'
       },
       {
         path: 'export-results',

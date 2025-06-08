@@ -20,6 +20,13 @@ export class SearchResultDetailComponent implements OnInit {
   loading = true;
   saving = false;
   error: string | null = null;
+  currentPage: number = 1;
+  
+  // Navigation context
+  pageResults: any[] = [];
+  currentIndex: number = -1;
+  totalResults: number = 0;
+  perPage: number = 60;
 
   constructor(
     private route: ActivatedRoute,
@@ -29,24 +36,39 @@ export class SearchResultDetailComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.surveyId = this.route.parent?.snapshot.paramMap.get('id') || null;
-    this.resultId = this.route.snapshot.paramMap.get('resultId') || null;
+    // Subscribe to route parameter changes to handle navigation within same component
+    this.route.paramMap.subscribe(params => {
+      this.resultId = params.get('resultId');
+      const pageParam = params.get('page');
+      this.currentPage = pageParam ? Number(pageParam) : 1;
+      
+      this.surveyId = this.route.parent?.snapshot.paramMap.get('id') || null;
 
-    if (this.surveyId && this.resultId) {
-      this.loadData();
-    } else {
-      this.error = 'Missing survey ID or result ID';
-      this.loading = false;
-    }
+      if (this.surveyId && this.resultId) {
+        this.loading = true;
+        this.error = null;
+        this.loadData();
+      } else {
+        this.error = 'Missing survey ID or result ID';
+        this.loading = false;
+      }
+    });
   }
 
   private loadData() {
     Promise.all([
       this.surveysService.getSurvey(this.surveyId!).toPromise(),
-      this.searchResultsService.getSearchResult(Number(this.resultId!)).toPromise()
-    ]).then(([survey, searchResult]) => {
+      this.searchResultsService.getSearchResult(Number(this.resultId!)).toPromise(),
+      this.searchResultsService.getSearchResults(this.surveyId!, '', this.currentPage, 60).toPromise()
+    ]).then(([survey, searchResult, pageResultsResponse]) => {
       this.survey = survey;
       this.searchResult = searchResult;
+      this.pageResults = pageResultsResponse.results;
+      this.totalResults = pageResultsResponse.count;
+      
+      // Find current result's index in the page
+      this.currentIndex = this.pageResults.findIndex(r => r.id === Number(this.resultId));
+      
       this.loading = false;
     }).catch(error => {
       console.error('Error loading data:', error);
@@ -82,8 +104,57 @@ export class SearchResultDetailComponent implements OnInit {
 
   goBackToResults() {
     if (this.surveyId) {
-      this.router.navigate(['/surveys', this.surveyId, 'search-results']);
+      this.router.navigate(['/surveys', this.surveyId, 'search-results', 'page', this.currentPage]);
     }
+  }
+
+  goToPrevious() {
+    if (!this.surveyId) return;
+
+    if (this.currentIndex > 0) {
+      // Navigate to previous result on current page
+      const prevResult = this.pageResults[this.currentIndex - 1];
+      this.router.navigate(['/surveys', this.surveyId, 'search-results', 'page', this.currentPage, 'result', prevResult.id]);
+    } else if (this.currentPage > 1) {
+      // Navigate to last result of previous page - fetch it first
+      this.searchResultsService.getSearchResults(this.surveyId, '', this.currentPage - 1, this.perPage).subscribe(response => {
+        if (response.results && response.results.length > 0) {
+          const lastResult = response.results[response.results.length - 1];
+          this.router.navigate(['/surveys', this.surveyId, 'search-results', 'page', this.currentPage - 1, 'result', lastResult.id]);
+        }
+      });
+    }
+  }
+
+  goToNext() {
+    if (!this.surveyId) return;
+
+    if (this.currentIndex < this.pageResults.length - 1) {
+      // Navigate to next result on current page
+      const nextResult = this.pageResults[this.currentIndex + 1];
+      this.router.navigate(['/surveys', this.surveyId, 'search-results', 'page', this.currentPage, 'result', nextResult.id]);
+    } else if (this.hasMorePages()) {
+      // Navigate to first result of next page - fetch it first
+      this.searchResultsService.getSearchResults(this.surveyId, '', this.currentPage + 1, this.perPage).subscribe(response => {
+        if (response.results && response.results.length > 0) {
+          const firstResult = response.results[0];
+          this.router.navigate(['/surveys', this.surveyId, 'search-results', 'page', this.currentPage + 1, 'result', firstResult.id]);
+        }
+      });
+    }
+  }
+
+  get hasPrevious(): boolean {
+    return this.currentIndex > 0 || this.currentPage > 1;
+  }
+
+  get hasNext(): boolean {
+    return this.currentIndex < this.pageResults.length - 1 || this.hasMorePages();
+  }
+
+  private hasMorePages(): boolean {
+    const totalPages = Math.ceil(this.totalResults / this.perPage);
+    return this.currentPage < totalPages;
   }
 
   getInitialFormValues(): { [fieldId: string]: any } {

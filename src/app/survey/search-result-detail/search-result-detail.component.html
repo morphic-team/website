@@ -15,7 +15,15 @@
   <div *ngIf="!loading && !error && searchResult && survey">
     <!-- Header with navigation -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2>Search Result Details</h2>
+      <div class="d-flex align-items-center gap-2">
+        <button type="button" class="btn btn-outline-primary" (click)="goToPrevious()" [disabled]="!hasPrevious">
+          ← Back
+        </button>
+        <button type="button" class="btn btn-outline-primary" (click)="goToNext()" [disabled]="!hasNext">
+          Forward →
+        </button>
+      </div>
+      <h2 class="mb-0">Search Result {{ searchResult.id }}</h2>
       <button type="button" class="btn btn-outline-secondary" (click)="goBackToResults()">
         ← Back to Results
       </button>

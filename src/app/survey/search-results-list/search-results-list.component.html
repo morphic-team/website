@@ -6,7 +6,7 @@
   </form>
 
   <pagination-controls 
-    (pageChange)="pageChanged()" 
+    (pageChange)="onPageChange($event)" 
     [id]="'searchResults'" 
     [maxSize]="5"
     [directionLinks]="true"
@@ -21,12 +21,13 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let searchResult of searchResults" 
-          [routerLink]="['/surveys', surveyId, 'search-results', searchResult.id]"
+      <tr *ngFor="let searchResult of searchResults | paginate: { id: 'searchResults', itemsPerPage: perPage, currentPage: currentPage, totalItems: totalSearchResults }" 
+          [routerLink]="['/surveys', surveyId, 'search-results', 'page', currentPage, 'result', searchResult.id]"
           style="cursor: pointer">
         <td>{{ searchResult.id }}</td>
         <td>{{ searchResult.visibleLink }}</td>
       </tr>
     </tbody>
   </table>
+
 </div>

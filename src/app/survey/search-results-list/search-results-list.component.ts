@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { SearchResultsService } from '../services/search-results.service'; // Adjust the path as necessary
 import { FormsModule } from '@angular/forms'; // Import FormsModule
 import { NgxPaginationModule } from 'ngx-pagination'; // Import NgxPaginationModule
@@ -22,20 +22,27 @@ export class SearchResultsListComponent implements OnInit {
   surveyId: string | null = null; // Store the survey ID
 
   constructor(
-    private route: ActivatedRoute, 
+    private route: ActivatedRoute,
+    private router: Router,
     private searchResultsService: SearchResultsService // Make sure this service exists
   ) {}
 
   ngOnInit(): void {
     const surveyIdFromParams = this.route.parent?.snapshot.paramMap.get('id');
-    this.surveyId = surveyIdFromParams !== undefined ? surveyIdFromParams : null; // Assign null if undefined
+    this.surveyId = surveyIdFromParams !== undefined ? surveyIdFromParams : null;
 
-    if (this.surveyId) {
-      this.fetchTags();
-      this.getSearchResults(); // Fetch search results when the component initializes
-    } else {
-      console.error('Survey ID not found in route parameters');
-    }
+    // Subscribe to route parameter changes to handle page navigation
+    this.route.paramMap.subscribe(params => {
+      const pageParam = params.get('page');
+      this.currentPage = pageParam ? Number(pageParam) : 1;
+      
+      if (this.surveyId) {
+        this.fetchTags();
+        this.getSearchResults();
+      } else {
+        console.error('Survey ID not found in route parameters');
+      }
+    });
   }
 
   fetchTags(): void {
@@ -66,10 +73,16 @@ export class SearchResultsListComponent implements OnInit {
   }
 
   filterSearchResults(): void {
-    this.getSearchResults(); // Fetch results based on the current filter
+    // Navigate to page 1 when filtering
+    if (this.surveyId) {
+      this.router.navigate(['/surveys', this.surveyId, 'search-results', 'page', 1]);
+    }
   }
 
-  pageChanged(): void {
-    this.getSearchResults(); // Fetch results for the selected page
+  onPageChange(page: number): void {
+    // Navigate to the selected page
+    if (this.surveyId) {
+      this.router.navigate(['/surveys', this.surveyId, 'search-results', 'page', page]);
+    }
   }
 }
