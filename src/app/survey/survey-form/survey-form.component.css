@@ -1,0 +1,19 @@
+.survey-form {
+  max-width: 100%;
+}
+
+.form-label {
+  font-weight: 500;
+}
+
+.text-danger {
+  margin-left: 4px;
+}
+
+.form-check {
+  margin-bottom: 8px;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+}

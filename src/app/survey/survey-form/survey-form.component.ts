@@ -1,0 +1,68 @@
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Survey, SurveyField } from '../models/survey.model';
+import { LocationPickerComponent } from '../location-picker/location-picker.component';
+import { LocationData } from '../models/location.model';
+
+@Component({
+  selector: 'app-survey-form',
+  imports: [CommonModule, FormsModule, LocationPickerComponent],
+  templateUrl: './survey-form.component.html',
+  styleUrls: ['./survey-form.component.css']
+})
+export class SurveyFormComponent implements OnInit {
+  @Input() survey: Survey = {
+    name: '',
+    comments: '',
+    fields: [],
+    isMutable: true
+  };
+
+  @Input() initialValues: { [fieldId: string]: any } = {};
+  @Input() disabled: boolean = false;
+  @Input() showSubmitButton: boolean = true;
+  @Input() submitButtonText: string = 'Submit';
+
+  @Output() formSubmit = new EventEmitter<{ [fieldId: string]: any }>();
+  @Output() formChange = new EventEmitter<{ [fieldId: string]: any }>();
+
+  formValues: { [fieldId: string]: any } = {};
+
+  constructor() {}
+
+  ngOnInit() {
+    // Initialize form values with initial values
+    this.formValues = { ...this.initialValues };
+  }
+
+  onFormValueChange() {
+    this.formChange.emit({ ...this.formValues });
+  }
+
+  onSubmit() {
+    this.formSubmit.emit({ ...this.formValues });
+  }
+
+  getOptionsArray(field: any): string[] {
+    if (!field.options) return [];
+    if (Array.isArray(field.options)) {
+      return field.options;
+    }
+    return field.options.split(',').map((option: string) => option.trim()).filter((option: string) => option.length > 0);
+  }
+
+  getFieldKey(field: any): string {
+    // Use field ID as the key for stable references
+    return field.id.toString();
+  }
+
+  isFormValid(): boolean {
+    for (const field of this.survey.fields) {
+      if (field.required && !this.formValues[this.getFieldKey(field)]) {
+        return false;
+      }
+    }
+    return true;
+  }
+}

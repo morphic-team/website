@@ -30,4 +30,22 @@ export class SearchResultsService {
       params: params
     });
   }
+
+  // Get individual search result with field values
+  getSearchResult(searchResultId: number): Observable<any> {
+    return this.http.get<any>(`/api/search_results/${searchResultId}`);
+  }
+
+  // Update search result field values and completion state
+  updateSearchResult(searchResultId: number, fieldValues: Record<string, any>, completionState?: string): Observable<any> {
+    const payload: any = {
+      field_values: fieldValues
+    };
+    
+    if (completionState) {
+      payload.completion_state = completionState;
+    }
+    
+    return this.http.patch<any>(`/api/search_results/${searchResultId}`, payload);
+  }
 }

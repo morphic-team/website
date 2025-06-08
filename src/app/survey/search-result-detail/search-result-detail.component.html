@@ -1,1 +1,85 @@
-<p>search-result-detail works!</p>
+<div class="container-fluid">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="d-flex justify-content-center py-5">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="alert alert-danger" role="alert">
+    {{ error }}
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!loading && !error && searchResult && survey">
+    <!-- Header with navigation -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>Search Result Details</h2>
+      <button type="button" class="btn btn-outline-secondary" (click)="goBackToResults()">
+        ← Back to Results
+      </button>
+    </div>
+
+    <div class="row">
+      <!-- Search Result Details -->
+      <div class="col-md-6 mb-4">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">Search Result Information</h5>
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <strong>ID:</strong> {{ searchResult.id }}
+            </div>
+            <div class="mb-3" *ngIf="searchResult.visible_link">
+              <strong>Visible Link:</strong> 
+              <a [href]="searchResult.visible_link" target="_blank" class="text-break">
+                {{ searchResult.visible_link }}
+              </a>
+            </div>
+            <div class="mb-3" *ngIf="searchResult.direct_link">
+              <strong>Direct Link:</strong> 
+              <a [href]="searchResult.direct_link" target="_blank" class="text-break">
+                {{ searchResult.direct_link }}
+              </a>
+            </div>
+            <div class="mb-3" *ngIf="searchResult.search">
+              <strong>Search:</strong> {{ searchResult.search.name }}
+            </div>
+            <div class="mb-3" *ngIf="searchResult.completion_state">
+              <strong>Status:</strong> 
+              <span class="badge" 
+                    [class]="searchResult.completion_state === 'completed' ? 'bg-success' : 'bg-warning'">
+                {{ searchResult.completion_state }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Survey Form -->
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">{{ survey.name }} - Data Entry</h5>
+          </div>
+          <div class="card-body">
+            <app-survey-form
+              [survey]="survey"
+              [initialValues]="getInitialFormValues()"
+              [disabled]="saving"
+              [submitButtonText]="saving ? 'Saving...' : 'Save Data'"
+              (formSubmit)="onFormSubmit($event)">
+            </app-survey-form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div *ngIf="saving" class="alert alert-info mt-3" role="alert">
+      <strong>Saving...</strong> Please wait while we save your data.
+    </div>
+  </div>
+</div>
