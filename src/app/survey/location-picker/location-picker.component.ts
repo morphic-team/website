@@ -46,7 +46,10 @@ export class LocationPickerComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   ngAfterViewInit(): void {
-    this.initializeMap();
+    // Use setTimeout to defer initial location setting until after change detection
+    setTimeout(() => {
+      this.initializeMap();
+    }, 0);
   }
 
   ngOnDestroy(): void {
