@@ -38,6 +38,10 @@ export class SearchResultDetailComponent implements OnInit {
   currentIndex: number = -1;
   totalResults: number = 0;
   perPage: number = 60;
+  
+  // Image loading state
+  imageLoaded: boolean = false;
+  imageError: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -89,6 +93,10 @@ export class SearchResultDetailComponent implements OnInit {
       this.originalFormValues = { ...this.getInitialFormValues() };
       this.hasUnsavedChanges = false;
       this.changedFields.clear();
+      
+      // Reset image loading state
+      this.imageLoaded = false;
+      this.imageError = false;
       
       // Find current result's index in the page
       this.currentIndex = this.pageResults.findIndex(r => r.id === Number(this.resultId));
@@ -353,5 +361,28 @@ export class SearchResultDetailComponent implements OnInit {
       }
     }
     return initialValues;
+  }
+
+  onImageLoad() {
+    this.imageLoaded = true;
+    this.imageError = false;
+  }
+
+  onImageError(event: any) {
+    this.imageError = true;
+    this.imageLoaded = false;
+    console.warn('Failed to load search result image:', event);
+  }
+
+  getDisplayUrl(url: string): string {
+    try {
+      const urlObj = new URL(url);
+      // Return domain + path, truncated if too long
+      const displayUrl = urlObj.hostname + urlObj.pathname;
+      return displayUrl.length > 50 ? displayUrl.substring(0, 47) + '...' : displayUrl;
+    } catch {
+      // Fallback for invalid URLs
+      return url.length > 50 ? url.substring(0, 47) + '...' : url;
+    }
   }
 }

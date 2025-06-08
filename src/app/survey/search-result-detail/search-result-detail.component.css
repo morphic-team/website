@@ -26,3 +26,33 @@
   box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
 }
 
+/* Image display styling */
+.image-container {
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-result-image {
+  max-height: 300px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.search-result-image:hover {
+  transform: scale(1.02);
+  cursor: pointer;
+}
+
+/* External link styling */
+.link-external {
+  word-break: break-all;
+}
+
+.link-external i {
+  font-size: 0.8em;
+  opacity: 0.7;
+}
+

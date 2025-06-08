@@ -33,6 +33,43 @@
     <div class="row">
       <!-- Search Result Details -->
       <div class="col-md-6 mb-4">
+        <!-- Image Preview Card -->
+        <div class="card mb-3">
+          <div class="card-header">
+            <h6 class="card-title mb-0">Image Preview</h6>
+          </div>
+          <div class="card-body text-center">
+            <div class="image-container">
+              <img [src]="searchResult.directLink" 
+                   [alt]="'Search result from ' + searchResult.search.name"
+                   class="img-fluid search-result-image"
+                   (load)="onImageLoad()"
+                   (error)="onImageError($event)"
+                   [style.display]="imageLoaded ? 'block' : 'none'">
+              
+              <!-- Loading indicator -->
+              <div *ngIf="!imageLoaded && !imageError" class="d-flex justify-content-center py-3">
+                <div class="spinner-border spinner-border-sm" role="status">
+                  <span class="visually-hidden">Loading image...</span>
+                </div>
+                <span class="ms-2 text-muted">Loading image...</span>
+              </div>
+              
+              <!-- Error fallback -->
+              <div *ngIf="imageError" class="text-muted py-3">
+                <i class="fa fa-image" aria-hidden="true"></i>
+                <p class="mb-0">Image could not be loaded</p>
+                <small>
+                  <a [href]="searchResult.directLink" target="_blank" class="text-decoration-none">
+                    View original →
+                  </a>
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metadata Card -->
         <div class="card">
           <div class="card-header">
             <h5 class="card-title mb-0">Search Result Information</h5>
@@ -41,26 +78,33 @@
             <div class="mb-3">
               <strong>ID:</strong> {{ searchResult.id }}
             </div>
-            <div class="mb-3" *ngIf="searchResult.visible_link">
-              <strong>Visible Link:</strong> 
-              <a [href]="searchResult.visible_link" target="_blank" class="text-break">
-                {{ searchResult.visible_link }}
+            <div class="mb-3">
+              <strong>Search Query:</strong> 
+              <span class="badge bg-info">{{ searchResult.search.name }}</span>
+            </div>
+            <div class="mb-3">
+              <strong>Source Page:</strong> 
+              <a [href]="searchResult.visibleLink" target="_blank" class="text-break link-external">
+                {{ getDisplayUrl(searchResult.visibleLink) }}
+                <i class="fa fa-external-link-alt ms-1" aria-hidden="true"></i>
               </a>
             </div>
-            <div class="mb-3" *ngIf="searchResult.direct_link">
-              <strong>Direct Link:</strong> 
-              <a [href]="searchResult.direct_link" target="_blank" class="text-break">
-                {{ searchResult.direct_link }}
+            <div class="mb-3">
+              <strong>Image URL:</strong> 
+              <a [href]="searchResult.directLink" target="_blank" class="text-break link-external">
+                {{ getDisplayUrl(searchResult.directLink) }}
+                <i class="fa fa-external-link-alt ms-1" aria-hidden="true"></i>
               </a>
             </div>
-            <div class="mb-3" *ngIf="searchResult.search">
-              <strong>Search:</strong> {{ searchResult.search.name }}
-            </div>
-            <div class="mb-3" *ngIf="searchResult.completion_state">
+            <div class="mb-3">
               <strong>Status:</strong> 
               <span class="badge" 
-                    [class]="searchResult.completion_state === 'completed' ? 'bg-success' : 'bg-warning'">
-                {{ searchResult.completion_state }}
+                    [ngClass]="{
+                      'bg-success': searchResult.completionState === 'DONE',
+                      'bg-warning': searchResult.completionState === 'REVISIT',
+                      'bg-danger': searchResult.completionState === 'NOT_USABLE'
+                    }">
+                {{ searchResult.completionState }}
               </span>
             </div>
           </div>
