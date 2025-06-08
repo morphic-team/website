@@ -383,6 +383,9 @@ export class SearchResultDetailComponent implements OnInit {
       
       if (value !== undefined) {
         initialValues[fieldId] = value;
+      } else if (field.fieldType === 'location') {
+        // Set location fields to null when no value to match LocationPicker's initial state
+        initialValues[fieldId] = null;
       }
     }
     return initialValues;
