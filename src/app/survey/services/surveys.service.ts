@@ -42,4 +42,11 @@ export class SurveysService {
       switchMap(() => this.refresh())  // Automatically refresh the list after creating a survey
     );
   }
+
+  // Export survey results as CSV
+  exportResults(surveyId: string): Observable<Blob> {
+    return this.http.get(`/api/surveys/${surveyId}/export-results`, {
+      responseType: 'blob'
+    });
+  }
 }

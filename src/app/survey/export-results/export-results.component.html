@@ -1,1 +1,78 @@
-<p>export-results works!</p>
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="mb-0">Export Survey Results</h4>
+        </div>
+        <div class="card-body">
+          <div *ngIf="isLoading" class="text-center py-5">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+
+          <div *ngIf="!isLoading">
+            <div class="mb-4">
+              <h5>Survey Summary</h5>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <strong>Survey Name:</strong>
+                    <p class="mb-0">{{ survey?.name || 'Unnamed Survey' }}</p>
+                  </div>
+                  <div class="mb-3">
+                    <strong>Total Search Results:</strong>
+                    <p class="mb-0">{{ resultsCount }}</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <strong>Number of Fields:</strong>
+                    <p class="mb-0">{{ survey?.fields?.length || 0 }}</p>
+                  </div>
+                  <div class="mb-3">
+                    <strong>Export Format:</strong>
+                    <p class="mb-0">CSV (Comma-Separated Values)</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="alert alert-info" role="alert">
+              <i class="bi bi-info-circle me-2"></i>
+              The exported CSV file will contain all search results with their associated field data, including:
+              <ul class="mb-0 mt-2">
+                <li>Result ID and completion status</li>
+                <li>All survey field responses</li>
+                <li>Search name and query</li>
+                <li>Direct and visible links</li>
+              </ul>
+            </div>
+
+            <div class="text-center">
+              <button 
+                class="btn btn-primary btn-lg" 
+                (click)="downloadCSV()"
+                [disabled]="isDownloading || resultsCount === 0"
+              >
+                <span *ngIf="!isDownloading">
+                  <i class="bi bi-download me-2"></i>
+                  Download as CSV
+                </span>
+                <span *ngIf="isDownloading">
+                  <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Downloading...
+                </span>
+              </button>
+              
+              <div *ngIf="resultsCount === 0" class="text-muted mt-2">
+                <small>No results to export yet</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
