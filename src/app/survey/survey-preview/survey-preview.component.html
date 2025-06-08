@@ -54,15 +54,16 @@
 
       <!-- Location Field -->
       <div *ngIf="field.fieldType === 'location'" class="form-group">
-        <input type="text" 
-               class="form-control" 
-               [id]="field.id"
-               [(ngModel)]="previewValues[field.id]"
-               [name]="field.id"
-               [required]="!!field.required"
-               placeholder="Enter location coordinates or description"
-               disabled>
-        <small class="form-text text-muted">Location field for geographic data</small>
+        <app-location-picker
+          [options]="{
+            height: '250px',
+            defaultLocation: previewValues[field.id] || null,
+            disabled: true
+          }"
+          [(ngModel)]="previewValues[field.id]"
+          [name]="field.id">
+        </app-location-picker>
+        <small class="form-text text-muted">Click on the map to select a location</small>
       </div>
 
     </div>

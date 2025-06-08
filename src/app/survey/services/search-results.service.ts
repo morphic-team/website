@@ -15,12 +15,19 @@ export class SearchResultsService {
     }
 
 
-  getSearchResults(surveyId: string, filter: string, page: number): Observable<any> {
+  getSearchResults(surveyId: string, filter: string, page: number, perPage: number = 60): Observable<any> {
+    const params: any = {
+      page: page.toString(),
+      per_page: perPage.toString()
+    };
+    
+    // Only add filter if it's not empty
+    if (filter && filter.trim()) {
+      params.filter = filter;
+    }
+    
     return this.http.get<any>(`/api/surveys/${surveyId}/search_results`, {
-      params: {
-        filter: filter,
-        page: page.toString()
-      }
+      params: params
     });
   }
 }

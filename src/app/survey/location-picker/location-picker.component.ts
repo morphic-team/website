@@ -1,0 +1,183 @@
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, AfterViewInit, ElementRef, ViewChild, forwardRef } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import * as L from 'leaflet';
+import { LocationData, LocationPickerOptions } from '../models/location.model';
+
+// Fix for default marker icons in Leaflet
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'marker-icon-2x.png',
+  iconUrl: 'marker-icon.png',
+  shadowUrl: 'marker-shadow.png',
+});
+
+@Component({
+  selector: 'app-location-picker',
+  imports: [CommonModule],
+  templateUrl: './location-picker.component.html',
+  styleUrl: './location-picker.component.css',
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => LocationPickerComponent),
+      multi: true
+    }
+  ]
+})
+export class LocationPickerComponent implements OnInit, AfterViewInit, OnDestroy, ControlValueAccessor {
+  @Input() options: LocationPickerOptions = {};
+  @Output() locationChange = new EventEmitter<LocationData>();
+  @ViewChild('mapContainer', { static: true }) mapContainer!: ElementRef<HTMLDivElement>;
+
+  // Current location and marker
+  private _location: LocationData | null = null;
+  private map: L.Map | null = null;
+  private marker: L.Marker | null = null;
+
+  // ControlValueAccessor implementation
+  private onChange = (location: LocationData | null) => {};
+  private onTouched = () => {};
+  disabled = false;
+
+  ngOnInit(): void {
+    // Initial setup happens in ngAfterViewInit
+  }
+
+  ngAfterViewInit(): void {
+    this.initializeMap();
+  }
+
+  ngOnDestroy(): void {
+    if (this.map) {
+      this.map.remove();
+    }
+  }
+
+  private initializeMap(): void {
+    // Default location (London)
+    const defaultLat = this.options.defaultLocation?.latitude || 51.505;
+    const defaultLng = this.options.defaultLocation?.longitude || -0.09;
+    const defaultZoom = this.options.zoom || 13;
+
+    // Initialize map
+    this.map = L.map(this.mapContainer.nativeElement).setView(
+      [defaultLat, defaultLng], 
+      defaultZoom
+    );
+
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(this.map);
+
+    // Add click handler for map
+    if (!this.disabled) {
+      this.map.on('click', (e: L.LeafletMouseEvent) => {
+        this.setLocation({
+          latitude: e.latlng.lat,
+          longitude: e.latlng.lng
+        });
+      });
+    }
+
+    // Set initial location if provided
+    if (this._location) {
+      this.updateMapView();
+    } else if (this.options.defaultLocation) {
+      this.setLocation(this.options.defaultLocation);
+    }
+  }
+
+  private setLocation(location: LocationData): void {
+    this._location = location;
+    this.updateMapView();
+    this.locationChange.emit(location);
+    this.onChange(location);
+    this.onTouched();
+  }
+
+  private updateMapView(): void {
+    if (!this.map || !this._location) return;
+
+    const latLng = L.latLng(this._location.latitude, this._location.longitude);
+
+    // Remove existing marker
+    if (this.marker) {
+      this.map.removeLayer(this.marker);
+    }
+
+    // Add new marker
+    this.marker = L.marker(latLng, {
+      draggable: !this.disabled
+    }).addTo(this.map);
+
+    // Handle marker drag
+    if (!this.disabled) {
+      this.marker.on('dragend', () => {
+        if (this.marker) {
+          const position = this.marker.getLatLng();
+          this.setLocation({
+            latitude: position.lat,
+            longitude: position.lng
+          });
+        }
+      });
+    }
+
+    // Center map on location
+    this.map.setView(latLng, this._location.zoom || this.options.zoom || 13);
+  }
+
+  clearLocation(): void {
+    if (this.marker && this.map) {
+      this.map.removeLayer(this.marker);
+      this.marker = null;
+    }
+    this._location = null;
+    this.locationChange.emit(null as any);
+    this.onChange(null);
+    this.onTouched();
+  }
+
+  get location(): LocationData | null {
+    return this._location;
+  }
+
+  get hasLocation(): boolean {
+    return this._location !== null;
+  }
+
+  get locationDisplay(): string {
+    if (!this._location) return 'No location selected';
+    return `${this._location.latitude.toFixed(6)}, ${this._location.longitude.toFixed(6)}`;
+  }
+
+  // ControlValueAccessor methods
+  writeValue(location: LocationData | null): void {
+    if (location) {
+      this.setLocation(location);
+    } else {
+      this.clearLocation();
+    }
+  }
+
+  registerOnChange(fn: (location: LocationData | null) => void): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+    if (this.marker) {
+      this.marker.dragging?.disable();
+      if (!isDisabled) {
+        this.marker.dragging?.enable();
+      }
+    }
+  }
+}

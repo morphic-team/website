@@ -40,19 +40,27 @@ export class SearchResultsListComponent implements OnInit {
 
   fetchTags(): void {
     if (this.surveyId) {
-      this.searchResultsService.getTags(this.surveyId).subscribe((response: TagResponse) => {
-        this.tags = response.results.map(tag => tag.value); // Now it directly maps to tag.value
-      }, error => {
-        console.error('Error fetching tags:', error); // Handle any errors
+      this.searchResultsService.getTags(this.surveyId).subscribe({
+        next: (response: TagResponse) => {
+          this.tags = response.results.map(tag => tag.value);
+        },
+        error: (error) => {
+          console.error('Error fetching tags:', error);
+        }
       });
     }
   }
 
   getSearchResults(): void {
     if (this.surveyId) {
-      this.searchResultsService.getSearchResults(this.surveyId, this.filter, this.currentPage).subscribe(response => {
-        this.searchResults = response.results;
-        this.totalSearchResults = response.count;
+      this.searchResultsService.getSearchResults(this.surveyId, this.filter, this.currentPage, this.perPage).subscribe({
+        next: (response) => {
+          this.searchResults = response.results;
+          this.totalSearchResults = response.count;
+        },
+        error: (error) => {
+          console.error('Error fetching search results:', error);
+        }
       });
     }
   }
