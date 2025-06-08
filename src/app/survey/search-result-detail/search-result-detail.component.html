@@ -16,17 +16,18 @@
     <!-- Header with navigation -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div class="d-flex align-items-center gap-2">
-        <button type="button" class="btn btn-outline-primary" (click)="goToPrevious()" [disabled]="!hasPrevious">
-          ← Back
+        <button type="button" class="btn btn-outline-secondary" (click)="goBackToResults()">
+          ← Back to Results
         </button>
-        <button type="button" class="btn btn-outline-primary" (click)="goToNext()" [disabled]="!hasNext">
-          Forward →
+        <button type="button" class="btn btn-outline-primary" (click)="goToPrevious()" [disabled]="!hasPrevious || saving">
+          ← Previous
+        </button>
+        <button type="button" class="btn btn-outline-primary" (click)="goToNext()" [disabled]="!hasNext || saving">
+          Next →
         </button>
       </div>
       <h2 class="mb-0">Search Result {{ searchResult.id }}</h2>
-      <button type="button" class="btn btn-outline-secondary" (click)="goBackToResults()">
-        ← Back to Results
-      </button>
+      <div></div> <!-- Spacer for flexbox alignment -->
     </div>
 
     <div class="row">
@@ -68,21 +69,32 @@
 
       <!-- Survey Form -->
       <div class="col-md-6">
-        <div class="card" [ngClass]="{'unsaved-changes': hasUnsavedChanges}">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0">{{ survey.name }} - Data Entry</h5>
-            <div *ngIf="hasUnsavedChanges" class="d-flex align-items-center gap-2">
-              <span class="text-warning">
-                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                Unsaved changes
-              </span>
-              <button type="button" 
-                      class="btn btn-outline-secondary btn-sm"
-                      (click)="revertChanges()"
-                      [disabled]="saving">
-                Revert
-              </button>
+        <div class="card" [ngClass]="{
+          'unsaved-changes': hasUnsavedChanges,
+          'completion-state-revisit': selectedCompletionState === 'REVISIT',
+          'completion-state-done': selectedCompletionState === 'DONE',
+          'completion-state-not-usable': selectedCompletionState === 'NOT_USABLE'
+        }">
+          <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="card-title mb-0">{{ survey.name }} - Data Entry</h5>
+              <div *ngIf="hasUnsavedChanges" class="d-flex align-items-center gap-2">
+                <span class="text-warning">
+                  <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                  Unsaved changes
+                </span>
+              </div>
             </div>
+            
+            <!-- Form action controls -->
+            <app-search-result-form-controls
+              [hasUnsavedChanges]="hasUnsavedChanges"
+              [saving]="saving"
+              [hasNext]="hasNext"
+              (revertChanges)="revertChanges()"
+              (saveForm)="saveForm()"
+              (saveAndNext)="saveAndNext($event)">
+            </app-search-result-form-controls>
           </div>
           <div class="card-body">
             <!-- Completion State Selector -->
@@ -110,10 +122,22 @@
               [initialValues]="getInitialFormValues()"
               [changedFields]="changedFields"
               [disabled]="saving"
-              [submitButtonText]="saving ? 'Saving...' : 'Save Data'"
+              [showSubmitButton]="false"
               (formSubmit)="onFormSubmit($event)"
               (fieldChange)="onFieldChange($event)">
             </app-survey-form>
+          </div>
+          
+          <!-- Form action controls (repeated at bottom) -->
+          <div class="card-footer">
+            <app-search-result-form-controls
+              [hasUnsavedChanges]="hasUnsavedChanges"
+              [saving]="saving"
+              [hasNext]="hasNext"
+              (revertChanges)="revertChanges()"
+              (saveForm)="saveForm()"
+              (saveAndNext)="saveAndNext($event)">
+            </app-search-result-form-controls>
           </div>
         </div>
       </div>

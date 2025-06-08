@@ -1,7 +1,19 @@
 /* Unsaved changes visual indicators */
 .unsaved-changes {
   background-color: #fff9e6;
+}
+
+/* Completion state border indicators */
+.completion-state-revisit {
   border: 2px solid #ffc107;
+}
+
+.completion-state-done {
+  border: 2px solid #198754;
+}
+
+.completion-state-not-usable {
+  border: 2px solid #dc3545;
 }
 
 .changed-field {
@@ -13,3 +25,4 @@
   border-color: #ffc107 !important;
   box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
 }
+

@@ -6,10 +6,11 @@ import { SearchResultsService } from '../services/search-results.service';
 import { SurveysService } from '../services/surveys.service';
 import { Survey } from '../models/survey.model';
 import { SurveyFormComponent } from '../survey-form/survey-form.component';
+import { SearchResultFormControlsComponent } from '../search-result-form-controls/search-result-form-controls.component';
 
 @Component({
     selector: 'app-search-result-detail',
-    imports: [CommonModule, FormsModule, SurveyFormComponent],
+    imports: [CommonModule, FormsModule, SurveyFormComponent, SearchResultFormControlsComponent],
     templateUrl: './search-result-detail.component.html',
     styleUrl: './search-result-detail.component.css'
 })
@@ -127,6 +128,10 @@ export class SearchResultDetailComponent implements OnInit {
   }
 
   revertChanges() {
+    if (!confirm('Are you sure you want to revert all changes? This will permanently discard your unsaved work.')) {
+      return;
+    }
+    
     // Revert completion state
     this.selectedCompletionState = this.originalCompletionState;
     
@@ -140,6 +145,92 @@ export class SearchResultDetailComponent implements OnInit {
     
     // Update the unsaved changes status
     this.updateUnsavedChangesStatus();
+  }
+
+  saveForm() {
+    if (!this.resultId || this.saving) return;
+
+    this.saving = true;
+    this.error = null;
+
+    // Get current form values from the survey form component
+    const formValues = this.surveyFormComponent ? this.surveyFormComponent.formValues : {};
+
+    this.searchResultsService.updateSearchResult(
+      Number(this.resultId), 
+      formValues, 
+      this.selectedCompletionState || undefined
+    ).subscribe({
+      next: (updatedResult) => {
+        this.searchResult = updatedResult;
+        
+        // Reset unsaved changes tracking after successful save
+        this.originalFormValues = { ...formValues };
+        this.originalCompletionState = this.selectedCompletionState;
+        this.changedFields.clear();
+        this.hasUnsavedChanges = false;
+        this.saving = false;
+      },
+      error: (error) => {
+        console.error('Error saving form:', error);
+        this.error = 'Failed to save form data';
+        this.saving = false;
+      }
+    });
+  }
+
+  saveAndNext(completionState: string) {
+    if (!this.resultId || this.saving || !this.hasNext) return;
+
+    this.saving = true;
+    this.error = null;
+
+    // Get current form values from the survey form component
+    const formValues = this.surveyFormComponent ? this.surveyFormComponent.formValues : {};
+
+    this.searchResultsService.updateSearchResult(
+      Number(this.resultId), 
+      formValues, 
+      completionState
+    ).subscribe({
+      next: (updatedResult) => {
+        this.searchResult = updatedResult;
+        
+        // Reset unsaved changes tracking after successful save
+        this.originalFormValues = { ...formValues };
+        this.originalCompletionState = completionState;
+        this.selectedCompletionState = completionState;
+        this.changedFields.clear();
+        this.hasUnsavedChanges = false;
+        this.saving = false;
+        
+        // Navigate to next result
+        this.navigateToNext();
+      },
+      error: (error) => {
+        console.error('Error saving form:', error);
+        this.error = 'Failed to save form data';
+        this.saving = false;
+      }
+    });
+  }
+
+  private navigateToNext() {
+    if (!this.surveyId) return;
+
+    if (this.currentIndex < this.pageResults.length - 1) {
+      // Navigate to next result on current page
+      const nextResult = this.pageResults[this.currentIndex + 1];
+      this.router.navigate(['/surveys', this.surveyId, 'search-results', 'page', this.currentPage, 'result', nextResult.id]);
+    } else if (this.hasMorePages()) {
+      // Navigate to first result of next page - fetch it first
+      this.searchResultsService.getSearchResults(this.surveyId, '', this.currentPage + 1, this.perPage).subscribe(response => {
+        if (response.results && response.results.length > 0) {
+          const firstResult = response.results[0];
+          this.router.navigate(['/surveys', this.surveyId, 'search-results', 'page', this.currentPage + 1, 'result', firstResult.id]);
+        }
+      });
+    }
   }
 
   private confirmNavigation(): boolean {
@@ -236,6 +327,7 @@ export class SearchResultDetailComponent implements OnInit {
     const totalPages = Math.ceil(this.totalResults / this.perPage);
     return this.currentPage < totalPages;
   }
+
 
   getInitialFormValues(): { [fieldId: string]: any } {
     if (!this.searchResult?.fieldValues || !this.survey) {
