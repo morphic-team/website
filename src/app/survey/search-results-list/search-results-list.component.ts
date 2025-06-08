@@ -4,6 +4,7 @@ import { SearchResultsService } from '../services/search-results.service'; // Ad
 import { FormsModule } from '@angular/forms'; // Import FormsModule
 import { NgxPaginationModule } from 'ngx-pagination'; // Import NgxPaginationModule
 import { TagResponse } from '../models/tag-response.model'; // Import the new model
+import { SearchResult } from '../models/search-result.model';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -14,7 +15,7 @@ import { CommonModule } from '@angular/common';
 })
 export class SearchResultsListComponent implements OnInit {
   tags: string[] = [];
-  searchResults: any[] = [];
+  searchResults: SearchResult[] = [];
   filter: string = '';
   currentPage: number = 1; // Change to 1-based index
   perPage: number = 60;

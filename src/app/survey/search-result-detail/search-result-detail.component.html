@@ -73,6 +73,22 @@
             <h5 class="card-title mb-0">{{ survey.name }} - Data Entry</h5>
           </div>
           <div class="card-body">
+            <!-- Completion State Selector -->
+            <div class="mb-3">
+              <label for="completionState" class="form-label">
+                <strong>Completion State</strong>
+              </label>
+              <select 
+                id="completionState" 
+                class="form-select" 
+                [(ngModel)]="selectedCompletionState"
+                [disabled]="saving">
+                <option value="REVISIT">REVISIT</option>
+                <option value="DONE">DONE</option>
+                <option value="NOT_USABLE">NOT_USABLE</option>
+              </select>
+            </div>
+
             <app-survey-form
               [survey]="survey"
               [initialValues]="getInitialFormValues()"

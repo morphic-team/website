@@ -18,14 +18,30 @@
       <tr>
         <th>ID</th>
         <th>Visible Link</th>
+        <th>Status</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let searchResult of searchResults | paginate: { id: 'searchResults', itemsPerPage: perPage, currentPage: currentPage, totalItems: totalSearchResults }" 
           [routerLink]="['/surveys', surveyId, 'search-results', 'page', currentPage, 'result', searchResult.id]"
-          style="cursor: pointer">
+          style="cursor: pointer"
+          [ngClass]="{
+            'table-success': searchResult.completionState === 'DONE',
+            'table-warning': searchResult.completionState === 'REVISIT',
+            'table-danger': searchResult.completionState === 'NOT_USABLE'
+          }">
         <td>{{ searchResult.id }}</td>
         <td>{{ searchResult.visibleLink }}</td>
+        <td>
+          <span class="badge"
+                [ngClass]="{
+                  'bg-success': searchResult.completionState === 'DONE',
+                  'bg-warning': searchResult.completionState === 'REVISIT',
+                  'bg-danger': searchResult.completionState === 'NOT_USABLE'
+                }">
+            {{ searchResult.completionState }}
+          </span>
+        </td>
       </tr>
     </tbody>
   </table>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { SearchResultsService } from '../services/search-results.service';
 import { SurveysService } from '../services/surveys.service';
 import { Survey } from '../models/survey.model';
@@ -8,7 +9,7 @@ import { SurveyFormComponent } from '../survey-form/survey-form.component';
 
 @Component({
     selector: 'app-search-result-detail',
-    imports: [CommonModule, SurveyFormComponent],
+    imports: [CommonModule, FormsModule, SurveyFormComponent],
     templateUrl: './search-result-detail.component.html',
     styleUrl: './search-result-detail.component.css'
 })
@@ -21,6 +22,7 @@ export class SearchResultDetailComponent implements OnInit {
   saving = false;
   error: string | null = null;
   currentPage: number = 1;
+  selectedCompletionState: string | null = null;
   
   // Navigation context
   pageResults: any[] = [];
@@ -61,10 +63,17 @@ export class SearchResultDetailComponent implements OnInit {
       this.searchResultsService.getSearchResult(Number(this.resultId!)).toPromise(),
       this.searchResultsService.getSearchResults(this.surveyId!, '', this.currentPage, 60).toPromise()
     ]).then(([survey, searchResult, pageResultsResponse]) => {
+      if (!survey || !searchResult || !pageResultsResponse) {
+        throw new Error('Failed to load required data');
+      }
+      
       this.survey = survey;
       this.searchResult = searchResult;
       this.pageResults = pageResultsResponse.results;
       this.totalResults = pageResultsResponse.count;
+      
+      // Initialize completion state from loaded data
+      this.selectedCompletionState = searchResult.completionState;
       
       // Find current result's index in the page
       this.currentIndex = this.pageResults.findIndex(r => r.id === Number(this.resultId));
@@ -87,7 +96,7 @@ export class SearchResultDetailComponent implements OnInit {
     this.searchResultsService.updateSearchResult(
       Number(this.resultId), 
       formValues, 
-      'completed'
+      this.selectedCompletionState || undefined
     ).subscribe({
       next: (updatedResult) => {
         this.searchResult = updatedResult;
