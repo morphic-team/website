@@ -87,14 +87,24 @@ export class SearchResultDetailComponent implements OnInit {
   }
 
   getInitialFormValues(): { [fieldId: string]: any } {
-    if (!this.searchResult?.field_values || !this.survey) {
+    if (!this.searchResult?.fieldValues || !this.survey) {
       return {};
     }
 
     const initialValues: { [fieldId: string]: any } = {};
     for (const field of this.survey.fields) {
       const fieldId = field.id.toString();
-      const value = this.searchResult.field_values[fieldId];
+      let value = this.searchResult.fieldValues[fieldId];
+      
+      // Parse JSON strings for location fields
+      if (field.fieldType === 'location' && typeof value === 'string' && value.startsWith('{')) {
+        try {
+          value = JSON.parse(value);
+        } catch (e) {
+          console.warn('Failed to parse location JSON:', value, e);
+        }
+      }
+      
       if (value !== undefined) {
         initialValues[fieldId] = value;
       }

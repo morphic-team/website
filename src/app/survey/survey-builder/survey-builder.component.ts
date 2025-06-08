@@ -46,7 +46,8 @@ export class SurveyBuilderComponent {
       id: this.generateFieldId(),
       label: this.addFieldForm.label.trim(),
       fieldType: this.addFieldForm.fieldType.id,
-      required: this.addFieldForm.required
+      required: this.addFieldForm.required,
+      order: this.survey.fields.length + 1
     };
 
     // Add options for select/radio fields
