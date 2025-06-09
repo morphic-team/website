@@ -6,6 +6,12 @@ import { NgxPaginationModule } from 'ngx-pagination'; // Import NgxPaginationMod
 import { SearchResult } from '../models/search-result.model';
 import { CommonModule } from '@angular/common';
 
+enum CompletionState {
+  DONE = 'DONE',
+  REVISIT = 'REVISIT',
+  NOT_USABLE = 'NOT_USABLE'
+}
+
 @Component({
     selector: 'app-search-results-list',
     imports: [CommonModule, RouterModule, FormsModule, NgxPaginationModule], // Add NgxPaginationModule here
@@ -19,6 +25,13 @@ export class SearchResultsListComponent implements OnInit, AfterViewInit {
   totalSearchResults: number = 0; // Initialize total search results
   surveyId: string | null = null; // Store the survey ID
   highlightResultId: number | null = null; // Result ID to highlight
+  completionStateFilter: CompletionState | null = null; // Filter by completion state
+  
+  // Per-page options
+  perPageOptions = [20, 60, 100, 200];
+  
+  // Expose enum to template
+  CompletionState = CompletionState;
 
   constructor(
     private route: ActivatedRoute,
@@ -52,7 +65,7 @@ export class SearchResultsListComponent implements OnInit, AfterViewInit {
 
   getSearchResults(): void {
     if (this.surveyId) {
-      this.searchResultsService.getSearchResults(this.surveyId, '', this.currentPage, this.perPage).subscribe({
+      this.searchResultsService.getSearchResults(this.surveyId, this.completionStateFilter, this.currentPage, this.perPage).subscribe({
         next: (response) => {
           this.searchResults = response.results;
           this.totalSearchResults = response.count;
@@ -71,6 +84,28 @@ export class SearchResultsListComponent implements OnInit, AfterViewInit {
     // Navigate to the selected page
     if (this.surveyId) {
       this.router.navigate(['/surveys', this.surveyId, 'search-results', 'page', page]);
+    }
+  }
+
+  onFilterChange(): void {
+    // Reset to page 1 when filtering changes
+    this.currentPage = 1;
+    // Immediately fetch new results with the filter
+    this.getSearchResults();
+    // Also update the URL to reflect page 1
+    if (this.surveyId) {
+      this.router.navigate(['/surveys', this.surveyId, 'search-results', 'page', 1]);
+    }
+  }
+
+  onPerPageChange(): void {
+    // Reset to page 1 when per-page changes
+    this.currentPage = 1;
+    // Immediately fetch new results with the new per-page setting
+    this.getSearchResults();
+    // Also update the URL to reflect page 1
+    if (this.surveyId) {
+      this.router.navigate(['/surveys', this.surveyId, 'search-results', 'page', 1]);
     }
   }
 

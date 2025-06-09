@@ -11,15 +11,15 @@ export class SearchResultsService {
 
 
 
-  getSearchResults(surveyId: string, filter: string, page: number, perPage: number = 60): Observable<SearchResultsResponse> {
+  getSearchResults(surveyId: string, completionState: string | null, page: number, perPage: number = 60): Observable<SearchResultsResponse> {
     const params: any = {
       page: page.toString(),
       per_page: perPage.toString()
     };
     
-    // Only add filter if it's not empty
-    if (filter && filter.trim()) {
-      params.filter = filter;
+    // Only add completion_state filter if it's set (not null)
+    if (completionState) {
+      params.completion_state = completionState;
     }
     
     return this.http.get<SearchResultsResponse>(`/api/surveys/${surveyId}/search_results`, {

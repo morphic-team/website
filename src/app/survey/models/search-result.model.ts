@@ -1,4 +1,3 @@
-import { Tag } from './tag-response.model';
 
 export interface SearchResult {
   id: number;
@@ -11,7 +10,6 @@ export interface SearchResult {
   completionState: string;
   duplicateOfId: number | null;
   imageScrapedState: string;
-  tags: Tag[];
   duplicatePool: SearchResult[];
   fieldValues?: Record<string, any>;
   search?: any;

@@ -21,3 +21,9 @@
   border: 2px solid #0dcaf0 !important;
   box-shadow: 0 0 8px rgba(13, 202, 240, 0.3);
 }
+
+/* Remove default margins from pagination controls */
+::ng-deep .ngx-pagination {
+  margin-left: 0;
+  margin-bottom: 0 !important;
+}
