@@ -5,9 +5,10 @@
       <thead>
         <tr>
           <th>ID</th>
-          <th>Visible Link</th>
-          <th>Status</th>
-          <th>Processing</th>
+          <th>Source Page</th>
+          <th>Image Filename</th>
+          <th class="text-center" style="width: 160px;">Completion State</th>
+          <th class="text-center" style="width: 200px;">Duplicate State</th>
         </tr>
       </thead>
       <tbody>
@@ -23,27 +24,20 @@
             }">
           <td>{{ searchResult.id }}</td>
           <td>{{ searchResult.visibleLink }}</td>
-          <td>
-            <span class="badge"
+          <td>{{ getImageFilename(searchResult.directLink) }}</td>
+          <td class="text-center">
+            <span class="badge badge-fixed-width"
                   [ngClass]="{
                     'bg-success': searchResult.completionState === 'DONE',
                     'bg-warning': searchResult.completionState === 'REVISIT',
                     'bg-danger': searchResult.completionState === 'NOT_USABLE'
                   }">
-              {{ searchResult.completionState }}
-            </span>
-            <span *ngIf="searchResult.duplicateOfId" class="ms-2 small">
-              <a [routerLink]="['/surveys', surveyId, 'search-results', 'page', currentPage, 'result', searchResult.duplicateOfId]" 
-                 [queryParams]="{ returnPage: currentPage, returnResult: searchResult.id }"
-                 class="text-decoration-none link-primary"
-                 (click)="$event.stopPropagation()">
-                Duplicate of #{{ searchResult.duplicateOfId }}
-              </a>
+              {{ getCompletionStateText(searchResult.completionState) }}
             </span>
           </td>
-          <td>
-            <span class="badge" [ngClass]="getProcessingBadgeClass(searchResult.imageScrapedState)">
-              {{ getProcessingStatusText(searchResult.imageScrapedState) }}
+          <td class="text-center">
+            <span class="badge badge-wide" [ngClass]="getDuplicateProcessingBadgeClass(searchResult)">
+              {{ getDuplicateProcessingText(searchResult) }}
             </span>
           </td>
         </tr>

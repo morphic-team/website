@@ -3,6 +3,16 @@
   font-size: 0.875rem;
 }
 
+.badge-fixed-width {
+  min-width: 160px;
+  text-align: center;
+}
+
+.badge-wide {
+  min-width: 180px;
+  text-align: center;
+}
+
 .table td {
   vertical-align: middle;
 }

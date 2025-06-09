@@ -116,6 +116,62 @@ export class SearchResultsListComponent implements OnInit, AfterViewInit {
     }
   }
 
+  getCompletionStateText(completionState: string): string {
+    switch (completionState) {
+      case 'DONE': return 'Done';
+      case 'REVISIT': return 'Revisit';
+      case 'NOT_USABLE': return 'Not Usable';
+      default: return completionState;
+    }
+  }
+
+  getDuplicateProcessingText(searchResult: any): string {
+    if (searchResult.duplicateOfId) {
+      return `Duplicate of #${searchResult.duplicateOfId}`;
+    }
+    
+    // Check processing state to determine if it's canonical or still processing
+    switch (searchResult.imageScrapedState) {
+      case 'NEW': return 'Unprocessed';
+      case 'STARTED': return 'Processing';
+      case 'SUCCESS': return 'Canonical';
+      case 'FAILURE': return 'Processing Failed';
+      default: return 'Canonical';
+    }
+  }
+
+  getDuplicateProcessingBadgeClass(searchResult: any): string {
+    if (searchResult.duplicateOfId) {
+      return 'bg-danger';
+    }
+    
+    switch (searchResult.imageScrapedState) {
+      case 'NEW': return 'bg-secondary';
+      case 'STARTED': return 'bg-info';
+      case 'SUCCESS': return 'bg-success';
+      case 'FAILURE': return 'bg-danger';
+      default: return 'bg-success';
+    }
+  }
+
+  getImageFilename(directLink: string): string {
+    if (!directLink) {
+      return 'Unknown';
+    }
+    
+    try {
+      // Extract filename from URL path
+      const url = new URL(directLink);
+      const pathname = url.pathname;
+      const filename = pathname.split('/').pop();
+      return filename || 'Unknown';
+    } catch (error) {
+      // If URL parsing fails, try to extract from string
+      const parts = directLink.split('/');
+      return parts[parts.length - 1] || 'Unknown';
+    }
+  }
+
   ngAfterViewInit(): void {
     // Initial scroll after view is fully initialized
     setTimeout(() => this.scrollToHighlightedResult(), 200);
