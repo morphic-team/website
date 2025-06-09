@@ -1,56 +1,54 @@
-<div class="container-fluid">
-  <div class="mb-3">
-    <p class="alert alert-info mb-3">
-      <strong>Important:</strong> An <strong>important</strong> first step is to install the morphic Chrome extension 
-      <a href="https://chrome.google.com/webstore/detail/fhigbmfhhlpkjbdamhjmfajhkfbkkgah" target="_blank">available here</a>.
-    </p>
+<div>
+  <!-- Chrome Extension Notice -->
+  <div *ngIf="showExtensionNotice" class="alert alert-info alert-dismissible mb-3">
+    <i class="bi bi-info-circle me-2"></i>
+    To gather search results, install the <a href="https://chrome.google.com/webstore/detail/fhigbmfhhlpkjbdamhjmfajhkfbkkgah" target="_blank">Morphic Chrome extension</a>.
+    <button type="button" class="btn-close" aria-label="Close" (click)="dismissExtensionNotice()"></button>
+  </div>
 
-    <div class="alert alert-danger" role="alert">
-      <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
-      <strong>Error:</strong>
-      If you are taken to a country specific version of Google Images - for example 'https://google.co.za' - after clicking the link, 
-      please manually edit the address to start with 'https://google.com'.
-    </div>
-
-    <button 
-      class="btn btn-primary mb-3" 
-      [routerLink]="['/surveys', surveyId, 'searches', 'create']">
-      <i class="bi bi-plus" aria-hidden="true"></i> Add search
+  <!-- Empty State -->
+  <div *ngIf="searches.length === 0" class="text-center py-5">
+    <i class="bi bi-search fs-1 text-muted mb-3"></i>
+    <h6 class="text-muted">No searches yet</h6>
+    <p class="text-muted mb-3">Create a search to start gathering results.</p>
+    <button class="btn btn-primary" [routerLink]="['/surveys', surveyId, 'searches', 'create']">
+      Create Your First Search
     </button>
   </div>
 
-  <div class="table-responsive">
-    <table class="table table-hover table-bordered">
-      <thead class="table-light">
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Search Query</th>
-          <th>Comments</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let search of searches">
-          <td>{{ search.id }}</td>
-          <td>{{ search.name }}</td>
-          <td>{{ search.searchQuery }}</td>
-          <td>{{ search.comments }}</td>
-          <td>
-            <span 
-              *ngIf="search.areResultsUploaded" 
-              class="badge bg-success">Successfully ran search</span>
-            <button 
-              *ngIf="!search.areResultsUploaded" 
-              (click)="runSearch(search)" 
-              class="btn btn-sm btn-primary">Run search</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div *ngIf="searches.length === 0" class="text-center text-muted py-4">
-    <p>No searches found. <a [routerLink]="['/surveys', surveyId, 'searches', 'create']">Add your first search</a>.</p>
+  <!-- Table State -->
+  <div *ngIf="searches.length > 0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Search Query</th>
+            <th>Comments</th>
+            <th class="text-end">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let search of searches">
+            <td>{{ search.name }}</td>
+            <td>{{ search.searchQuery }}</td>
+            <td>{{ search.comments }}</td>
+            <td class="text-end">
+              <span *ngIf="search.areResultsUploaded" class="badge bg-success">
+                Results uploaded
+              </span>
+              <button *ngIf="!search.areResultsUploaded" (click)="runSearch(search)" class="btn btn-sm btn-primary">
+                Gather Results
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="text-end mt-3">
+      <button class="btn btn-primary" [routerLink]="['/surveys', surveyId, 'searches', 'create']">
+        Add Search
+      </button>
+    </div>
   </div>
 </div>

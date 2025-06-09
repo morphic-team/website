@@ -50,6 +50,11 @@ export interface SessionAndUser {
   user: UserData | null;
 }
 
+export interface UserPreferences {
+  dismissedExtensionNotice?: boolean;
+  // Add other preferences here as needed
+}
+
 export interface StorageMigration {
   version: number;
   migrate: (data: { [key: string]: any }) => { [key: string]: any };
@@ -61,7 +66,8 @@ export interface StorageMigration {
 export class StorageService {
   private readonly STORAGE_VERSION_KEY = 'morphic_storage_version';
   private readonly SESSION_AND_USER_KEY = 'session_and_user';
-  private readonly CURRENT_VERSION = 1;
+  private readonly USER_PREFERENCES_KEY = 'user_preferences';
+  private readonly CURRENT_VERSION = 2;
   
   private get migrations(): StorageMigration[] {
     return [
@@ -74,6 +80,16 @@ export class StorageService {
               session: data['session_and_user']['session'],
               user: this.transformToCamelCase(data['session_and_user']['user'])
             };
+          }
+          return data;
+        }
+      },
+      {
+        version: 2,
+        migrate: (data) => {
+          // Initialize user preferences if not present
+          if (!data['user_preferences']) {
+            data['user_preferences'] = {};
           }
           return data;
         }
@@ -225,6 +241,32 @@ export class StorageService {
   getSession(): SessionData | null {
     const data = this.getSessionAndUser();
     return data?.session || null;
+  }
+
+  // User preferences methods
+  getUserPreferences(): UserPreferences {
+    this.ensureMigrationComplete();
+    const stored = localStorage.getItem(this.USER_PREFERENCES_KEY);
+    if (!stored) {
+      return {};
+    }
+    
+    try {
+      return JSON.parse(stored);
+    } catch {
+      return {};
+    }
+  }
+
+  setUserPreferences(preferences: UserPreferences): void {
+    this.ensureMigrationComplete();
+    localStorage.setItem(this.USER_PREFERENCES_KEY, JSON.stringify(preferences));
+  }
+
+  updateUserPreference<K extends keyof UserPreferences>(key: K, value: UserPreferences[K]): void {
+    const preferences = this.getUserPreferences();
+    preferences[key] = value;
+    this.setUserPreferences(preferences);
   }
 
   // Utility method for migrations
