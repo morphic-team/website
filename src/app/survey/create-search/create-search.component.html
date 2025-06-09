@@ -12,7 +12,7 @@
       class="form-control"
       [class.is-invalid]="getFieldError('name')"
       formControlName="name"
-      placeholder="Name">
+      placeholder="Enter a name">
     <div class="invalid-feedback" *ngIf="getFieldError('name')">
       {{ getFieldError('name') }}
     </div>
@@ -27,21 +27,21 @@
       class="form-control"
       [class.is-invalid]="getFieldError('searchQuery')"
       formControlName="searchQuery"
-      placeholder="Google Images query">
+      placeholder="Enter a search query">
     <div class="invalid-feedback" *ngIf="getFieldError('searchQuery')">
       {{ getFieldError('searchQuery') }}
     </div>
   </div>
 
-  <!-- Comments -->
+  <!-- Description -->
   <div class="mb-3">
-    <label for="comments" class="form-label">Comments</label>
+    <label for="comments" class="form-label">Description</label>
     <textarea 
       id="comments"
       class="form-control"
       rows="3"
       formControlName="comments"
-      placeholder="Comments"></textarea>
+      placeholder="Enter a description"></textarea>
   </div>
 
   <!-- Error Message -->

@@ -20,7 +20,7 @@
              [name]="'field_' + i"
              [disabled]="disabled"
              (ngModelChange)="onFieldValueChange(field, $event)"
-             placeholder="Enter text here">
+             placeholder="Enter a response">
 
       <!-- Select Field -->
       <select *ngIf="field.fieldType === 'select'" 
