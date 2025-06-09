@@ -1,41 +1,47 @@
-# Base image: Use a lightweight Debian image
-FROM debian:bookworm-slim
+# Build stage
+FROM node:22.16.0-alpine AS builder
 
-# Set the environment variables to non-interactive for apt-get
-ENV DEBIAN_FRONTEND=noninteractive
+WORKDIR /app
 
-# Install dependencies: curl, git, and any build dependencies you might need
-RUN apt-get update && \
-    apt-get install -y \
-    ca-certificates \
-    curl \
-    && apt-get clean
+# Copy package files
+COPY package*.json ./
 
-# Install Node.js (current stable version, e.g., 20.x)
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs && \
-    npm install -g npm
+# Install dependencies
+RUN npm ci
 
-# Create and set the working directory
-WORKDIR /usr/src/app
-
-# Install global Angular CLI
+# Install Angular CLI globally
 RUN npm install -g @angular/cli
 
-# Copy package.json and package-lock.json into the container
-COPY package.json package-lock.json ./
-
-# Install project dependencies
-RUN npm install
-
-# Copy the rest of the application files
+# Copy source code
 COPY . .
 
-# Disable Angular analytics
-RUN ng analytics off
+# Build Angular app for production
+RUN npm run build -- --configuration=production
 
-# Expose the default Angular port
-EXPOSE 4200
+# Runtime stage
+FROM nginx:alpine
 
-# Command to run the Angular development server
-CMD ["npm", "start"]
+# Remove default site config and add our own
+RUN rm /etc/nginx/conf.d/default.conf
+COPY angular-site.conf /etc/nginx/conf.d/
+
+# Copy built app from builder stage
+COPY --from=builder /app/dist/morphic-website/browser /usr/share/nginx/html
+
+# Set ownership for nginx user (user already exists in nginx:alpine)
+RUN chown -R nginx:nginx /usr/share/nginx/html && \
+    chown -R nginx:nginx /var/cache/nginx && \
+    chown -R nginx:nginx /var/log/nginx && \
+    chown -R nginx:nginx /etc/nginx/conf.d && \
+    touch /var/run/nginx.pid && \
+    chown -R nginx:nginx /var/run/nginx.pid
+
+# Switch to nginx user
+USER nginx
+
+# Expose port 8080
+EXPOSE 8080
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
+
