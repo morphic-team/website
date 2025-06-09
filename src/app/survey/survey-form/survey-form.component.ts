@@ -86,11 +86,6 @@ export class SurveyFormComponent implements OnInit {
   }
 
   isFormValid(): boolean {
-    for (const field of this.survey.fields) {
-      if (field.required && !this.formValues[this.getFieldKey(field)]) {
-        return false;
-      }
-    }
     return true;
   }
 }

@@ -1,13 +1,12 @@
 <div class="survey-preview">
   <div *ngIf="survey.fields.length === 0" class="text-muted text-center p-4">
-    <em>No fields added yet. Add some fields to see the preview.</em>
+    <em>Survey fields will appear here</em>
   </div>
 
   <form *ngIf="survey.fields.length > 0">
     <div *ngFor="let field of survey.fields" class="mb-3">
       <label [for]="field.id" class="form-label">
         {{ field.label }}
-        <span *ngIf="field.required" class="text-danger">*</span>
       </label>
 
       <!-- Text Field -->
@@ -17,7 +16,6 @@
              [id]="field.id"
              [(ngModel)]="previewValues[field.id]"
              [name]="field.id"
-             [required]="!!field.required"
              placeholder="Enter text here"
              disabled>
 
@@ -27,8 +25,7 @@
               [id]="field.id"
               [(ngModel)]="previewValues[field.id]"
               [name]="field.id"
-              [required]="!!field.required"
-              disabled>
+               disabled>
         <option value="">-- Select an option --</option>
         <option *ngFor="let option of getOptionsArray(field)" [value]="option">
           {{ option }}
@@ -44,8 +41,7 @@
                  [name]="field.id"
                  [value]="option"
                  [(ngModel)]="previewValues[field.id]"
-                 [required]="!!field.required"
-                 disabled>
+                     disabled>
           <label class="form-check-label" [for]="field.id + '_' + i">
             {{ option }}
           </label>
@@ -70,8 +66,7 @@
 
     <div class="mt-4 p-3 bg-light border rounded">
       <small class="text-muted">
-        <strong>Preview Mode:</strong> This is how the survey will appear to users. 
-        Fields are disabled in preview mode.
+        <strong>Preview Mode:</strong> This is how the survey will appear
       </small>
     </div>
   </form>

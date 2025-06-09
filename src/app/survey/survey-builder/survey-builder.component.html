@@ -2,18 +2,18 @@
         
         <!-- Existing Fields List -->
         <div class="mb-4" *ngIf="survey.fields.length > 0">
-          <h5>Survey Fields</h5>
           <div class="list-group">
             <div *ngFor="let field of survey.fields; let i = index" class="list-group-item">
               <div class="d-flex justify-content-between align-items-start">
                 <div class="flex-grow-1">
-                  <h6 class="mb-1">{{ field.label }}</h6>
-                  <small class="text-muted">
-                    Type: {{ field.fieldType }}
-                    <span *ngIf="field.required" class="text-danger ms-2">*Required</span>
-                  </small>
-                  <div *ngIf="field.options" class="mt-1">
-                    <small class="text-muted">Options: {{ field.options }}</small>
+                  <div class="mb-2">
+                    <span class="fw-bold">Field Name: </span><span class="fw-normal">{{ field.label }}</span>
+                  </div>
+                  <div class="mb-2">
+                    <span class="fw-bold">Field Type: </span><span class="fw-normal">{{ getFieldTypeLabel(field.fieldType) }}</span>
+                  </div>
+                  <div *ngIf="field.options" class="mb-1">
+                    <span class="fw-bold">Options: </span><span class="fw-normal">{{ field.options }}</span>
                   </div>
                 </div>
                 <div class="btn-group-vertical btn-group-sm">
@@ -32,16 +32,15 @@
           </div>
         </div>
 
-        <!-- Add Field Button -->
-        <div class="mb-3">
+        <!-- Add Field Button (only show when there are fields and form is hidden) -->
+        <div class="mb-3 d-flex justify-content-end" *ngIf="survey.fields.length > 0 && !showAddFieldForm">
           <button type="button" class="btn btn-primary" (click)="toggleAddFieldForm()">
-            <span *ngIf="!showAddFieldForm">+ Add Field</span>
-            <span *ngIf="showAddFieldForm">Cancel</span>
+            Add Field
           </button>
         </div>
 
         <!-- Add Field Form -->
-        <div *ngIf="showAddFieldForm" class="card bg-light">
+        <div *ngIf="survey.fields.length === 0 || showAddFieldForm" class="card bg-light">
           <div class="card-body">
             <h6>Add New Field</h6>
             
@@ -67,15 +66,15 @@
               <small class="form-text text-muted">Example: Option 1, Option 2, Option 3</small>
             </div>
 
-            <div class="mb-3 form-check">
-              <input type="checkbox" class="form-check-input" id="fieldRequired" 
-                     [(ngModel)]="addFieldForm.required">
-              <label class="form-check-label" for="fieldRequired">Required field</label>
-            </div>
 
-            <button type="button" class="btn btn-success" (click)="addField()" [disabled]="!addFieldForm.label.trim()">
-              Add Field
-            </button>
+            <div class="d-flex" [ngClass]="survey.fields.length > 0 ? 'justify-content-between' : 'justify-content-end'">
+              <button *ngIf="survey.fields.length > 0" type="button" class="btn btn-secondary" (click)="toggleAddFieldForm()">
+                Cancel
+              </button>
+              <button type="button" class="btn btn-primary" (click)="addField()" [disabled]="!addFieldForm.label.trim()">
+                Add Field
+              </button>
+            </div>
           </div>
         </div>
 

@@ -1,15 +1,25 @@
-<div class="container-fluid">
-  <div class="row">
-    <!-- Left Side: Survey Form + Builder -->
-    <div class="col-md-6">
-      <h1>Create New Survey</h1>
-      
+<div class="py-4">
+  <div class="card">
+    <div class="card-header">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item">
+            <a routerLink="/surveys" class="text-decoration-none">All Surveys</a>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">Create New Survey</li>
+        </ol>
+      </nav>
+    </div>
+    <div class="card-body">
       <div class="alert alert-danger" role="alert" *ngIf="errorMessage">
         {{ errorMessage }}
       </div>
 
-      <!-- Survey Basic Info -->
-      <div class="card mb-4">
+      <div class="row">
+        <!-- Left Side: Survey Form + Builder -->
+        <div class="col-md-6">
+          <!-- Survey Basic Info -->
+          <div class="card mb-4">
         <div class="card-header">
           <h4>Survey Information</h4>
         </div>
@@ -20,8 +30,8 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label" for="commentsInput">Comments (optional)</label>
-            <textarea [(ngModel)]="survey.comments" name="comments" class="form-control" id="commentsInput" rows="3" placeholder="Add any additional notes or description" [disabled]="isSubmitting"></textarea>
+            <label class="form-label" for="commentsInput">Description (optional)</label>
+            <textarea [(ngModel)]="survey.comments" name="comments" class="form-control" id="commentsInput" rows="3" placeholder="Enter survey description" [disabled]="isSubmitting"></textarea>
           </div>
         </div>
       </div>
@@ -36,18 +46,10 @@
         </div>
       </div>
 
-      <!-- Action Buttons -->
-      <div class="d-flex gap-2">
-        <button type="button" class="btn btn-primary" (click)="createSurvey()" [disabled]="isSubmitting">
-          <span *ngIf="isSubmitting">Creating...</span>
-          <span *ngIf="!isSubmitting">Create Survey</span>
-        </button>
-        <button type="button" class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting">Cancel</button>
-      </div>
-    </div>
+        </div>
 
-    <!-- Right Side: Complete Survey Preview -->
-    <div class="col-md-6">
+        <!-- Right Side: Complete Survey Preview -->
+        <div class="col-md-6">
       <div class="card">
         <div class="card-header">
           <h4>Survey Preview</h4>
@@ -57,11 +59,11 @@
           <div class="mb-4">
             <h2 *ngIf="survey.name; else noName">{{ survey.name }}</h2>
             <ng-template #noName>
-              <h2 class="text-muted">Survey Name</h2>
+              <h2 class="text-muted">Survey name will appear here</h2>
             </ng-template>
             
-            <p *ngIf="survey.comments; else noComments" class="text-muted">{{ survey.comments }}</p>
-            <ng-template #noComments>
+            <p *ngIf="survey.comments; else noDescription" class="text-muted">{{ survey.comments }}</p>
+            <ng-template #noDescription>
               <p class="text-muted">Survey description will appear here</p>
             </ng-template>
           </div>
@@ -69,6 +71,17 @@
           <!-- Survey Fields Preview -->
           <app-survey-preview [survey]="survey"></app-survey-preview>
         </div>
+      </div>
+        </div>
+      </div>
+      
+      <!-- Action Buttons -->
+      <div class="card-footer d-flex justify-content-between">
+        <button type="button" class="btn btn-secondary" (click)="cancel()" [disabled]="isSubmitting">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="createSurvey()" [disabled]="isSubmitting">
+          <span *ngIf="isSubmitting">Creating...</span>
+          <span *ngIf="!isSubmitting">Create Survey</span>
+        </button>
       </div>
     </div>
   </div>

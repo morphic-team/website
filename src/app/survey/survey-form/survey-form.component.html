@@ -7,7 +7,6 @@
     <div *ngFor="let field of getSortedFields(); let i = index" class="mb-3">
       <label [for]="'field_' + i" class="form-label">
         {{ field.label }}
-        <span *ngIf="field.required" class="text-danger">*</span>
         <span *ngIf="isFieldChanged(field)" class="text-warning ms-1">*</span>
       </label>
 
@@ -19,7 +18,6 @@
              [id]="'field_' + i"
              [(ngModel)]="formValues[getFieldKey(field)]"
              [name]="'field_' + i"
-             [required]="!!field.required"
              [disabled]="disabled"
              (ngModelChange)="onFieldValueChange(field, $event)"
              placeholder="Enter text here">
@@ -31,8 +29,7 @@
               [id]="'field_' + i"
               [(ngModel)]="formValues[getFieldKey(field)]"
               [name]="'field_' + i"
-              [required]="!!field.required"
-              [disabled]="disabled"
+               [disabled]="disabled"
               (ngModelChange)="onFieldValueChange(field, $event)">
         <option value="">-- Select an option --</option>
         <option *ngFor="let option of getOptionsArray(field)" [value]="option">
@@ -50,8 +47,7 @@
                  [name]="'field_' + i"
                  [value]="option"
                  [(ngModel)]="formValues[getFieldKey(field)]"
-                 [required]="!!field.required"
-                 [disabled]="disabled"
+                     [disabled]="disabled"
                  (ngModelChange)="onFieldValueChange(field, $event)">
           <label class="form-check-label" [for]="'field_' + i + '_' + j">
             {{ option }}
@@ -79,8 +75,7 @@
 
     <div *ngIf="showSubmitButton && !disabled" class="mt-4">
       <button type="submit" 
-              class="btn btn-primary" 
-              [disabled]="!isFormValid()">
+              class="btn btn-primary">
         {{ submitButtonText }}
       </button>
     </div>

@@ -11,7 +11,6 @@ export interface SurveyField {
   label: string;
   fieldType: 'text' | 'select' | 'radio' | 'location';
   options?: string; // comma-separated options for select/radio
-  required?: boolean;
   order: number;
 }
 

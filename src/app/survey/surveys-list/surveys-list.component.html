@@ -1,30 +1,58 @@
-<div class="container-fluid">
+<div class="py-4">
   <div class="card">
-    <div class="card-header">
-      <h5 class="mb-0">Surveys</h5>
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item active" aria-current="page">All Surveys</li>
+        </ol>
+      </nav>
+      <div *ngIf="surveys$ | async as surveys">
+        <button *ngIf="surveys.length > 0" (click)="createSurvey()" class="btn btn-primary">
+          Create New Survey
+        </button>
+      </div>
     </div>
-    <div class="card-body">
-      <button (click)="createSurvey()" class="btn btn-primary">
-        <i class="bi bi-plus" aria-hidden="true"></i>
-        Create new survey
-      </button>
+
+    <!-- Loading State -->
+    <div *ngIf="!surveys$" class="d-flex justify-content-center py-5">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading surveys...</span>
+      </div>
     </div>
-    <div class="table-responsive">
-      <table class="table table-hover mb-0">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Comments</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Loop over surveys and display them -->
-          <tr *ngFor="let survey of surveys$ | async" (click)="goToSurveyDetails(survey.id)" style="cursor: pointer;">
-            <td>{{ survey.name }}</td>
-            <td>{{ survey.comments }}</td>
-          </tr>
-        </tbody>
-      </table>
+
+    <!-- Content State -->
+    <div *ngIf="surveys$ | async as surveys">
+      <!-- Empty State -->
+      <div *ngIf="surveys.length === 0" class="card-body text-center py-5">
+        <i class="bi bi-clipboard-data fs-1 text-muted mb-3"></i>
+        <h6 class="text-muted">No surveys yet</h6>
+        <p class="text-muted mb-3">Create your first survey to get started collecting data.</p>
+        <button (click)="createSurvey()" class="btn btn-primary">
+          Create Your First Survey
+        </button>
+      </div>
+
+      <!-- Table State -->
+      <div *ngIf="surveys.length > 0" class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let survey of surveys">
+              <td>
+                <a [routerLink]="['/surveys', survey.id, 'search-results']" class="text-decoration-none fw-semibold">
+                  {{ survey.name }}
+                </a>
+              </td>
+              <td>{{ survey.comments }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>

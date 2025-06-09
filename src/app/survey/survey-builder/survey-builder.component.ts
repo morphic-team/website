@@ -25,8 +25,7 @@ export class SurveyBuilderComponent {
   addFieldForm = {
     label: '',
     fieldType: this.fieldTypes[0],
-    options: '',
-    required: false
+    options: ''
   };
 
   showAddFieldForm = false;
@@ -46,7 +45,6 @@ export class SurveyBuilderComponent {
       id: this.generateFieldId(),
       label: this.addFieldForm.label.trim(),
       fieldType: this.addFieldForm.fieldType.id,
-      required: this.addFieldForm.required,
       order: this.survey.fields.length + 1
     };
 
@@ -92,9 +90,18 @@ export class SurveyBuilderComponent {
     this.addFieldForm = {
       label: '',
       fieldType: this.fieldTypes[0],
-      options: '',
-      required: false
+      options: ''
     };
+  }
+
+  getFieldTypeLabel(fieldType: string): string {
+    switch (fieldType) {
+      case 'text': return 'Text';
+      case 'select': return 'Select';
+      case 'radio': return 'Radio';
+      case 'location': return 'Location';
+      default: return fieldType;
+    }
   }
 
   private generateFieldId(): string {
