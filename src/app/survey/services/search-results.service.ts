@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { TagResponse } from '../models/tag-response.model';
 import { SearchResult, SearchResultsResponse } from '../models/search-result.model';
 
 @Injectable({
@@ -10,10 +9,6 @@ import { SearchResult, SearchResultsResponse } from '../models/search-result.mod
 export class SearchResultsService {
   constructor(private http: HttpClient) {}
 
-    // Change the return type to Observable<TagResponse>
-    getTags(surveyId: string): Observable<TagResponse> {
-      return this.http.get<TagResponse>(`/api/surveys/${surveyId}/tags`); // Ensure the API returns the expected structure
-    }
 
 
   getSearchResults(surveyId: string, filter: string, page: number, perPage: number = 60): Observable<SearchResultsResponse> {
