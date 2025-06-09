@@ -16,7 +16,10 @@
           <a class="nav-link" [routerLink]="['/surveys', survey.id, 'searches']" routerLinkActive="active">Searches</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/surveys', survey.id, 'search-results']" routerLinkActive="active">Search Results</a>
+          <a class="nav-link" [routerLink]="['/surveys', survey.id, 'search-results']" routerLinkActive="active">
+            Search Results
+            <span *ngIf="isSearchResultDetailRoute()" class="text-muted"> › #{{ getCurrentSearchResultId() }}</span>
+          </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" [routerLink]="['/surveys', survey.id, 'export-results']" routerLinkActive="active">Export Results</a>

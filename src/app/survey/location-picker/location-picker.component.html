@@ -8,9 +8,8 @@
         type="button" 
         class="btn btn-sm btn-outline-danger"
         (click)="clearLocation()"
-        [disabled]="disabled"
-        title="Clear location">
-        <i class="bi bi-x"></i>
+        [disabled]="disabled">
+        Clear Location
       </button>
     </div>
   </div>
@@ -18,8 +17,7 @@
   <div class="map-container">
     <div 
       #mapContainer
-      [style.height]="options.height || '300px'"
-      [style.width]="options.width || '100%'"
+      class="map-element"
       [class.disabled]="disabled">
     </div>
   </div>

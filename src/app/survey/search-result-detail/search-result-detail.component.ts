@@ -1,11 +1,13 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, HostListener } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Observable } from 'rxjs';
 import { SearchResultsService } from '../services/search-results.service';
 import { SurveysService } from '../services/surveys.service';
 import { Survey } from '../models/survey.model';
 import { SurveyFormComponent } from '../survey-form/survey-form.component';
+import { CanComponentDeactivate } from '../guards/unsaved-changes.guard';
 
 @Component({
     selector: 'app-search-result-detail',
@@ -13,7 +15,7 @@ import { SurveyFormComponent } from '../survey-form/survey-form.component';
     templateUrl: './search-result-detail.component.html',
     styleUrl: './search-result-detail.component.css'
 })
-export class SearchResultDetailComponent implements OnInit {
+export class SearchResultDetailComponent implements OnInit, CanComponentDeactivate {
   @ViewChild(SurveyFormComponent) surveyFormComponent!: SurveyFormComponent;
   
   surveyId: string | null = null;
@@ -252,10 +254,15 @@ export class SearchResultDetailComponent implements OnInit {
     }
   }
 
-  private confirmNavigation(): boolean {
-    if (!this.hasUnsavedChanges) return true;
-    
-    return confirm('You have unsaved changes. Are you sure you want to leave this page?');
+  canDeactivate(): boolean | Observable<boolean> {
+    return !this.hasUnsavedChanges;
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  unloadNotification($event: any): void {
+    if (this.hasUnsavedChanges) {
+      $event.returnValue = true;
+    }
   }
 
   onFormSubmit(formValues: { [fieldId: string]: any }) {
@@ -289,8 +296,6 @@ export class SearchResultDetailComponent implements OnInit {
   }
 
   goBackToResults() {
-    if (!this.confirmNavigation()) return;
-    
     if (this.surveyId) {
       // Use return context if available, otherwise use current context
       const targetPage = this.returnPage || this.currentPage;
@@ -303,7 +308,6 @@ export class SearchResultDetailComponent implements OnInit {
   }
 
   goToPrevious() {
-    if (!this.confirmNavigation()) return;
     if (!this.surveyId) return;
 
     if (this.currentIndex > 0) {
@@ -322,7 +326,6 @@ export class SearchResultDetailComponent implements OnInit {
   }
 
   goToNext() {
-    if (!this.confirmNavigation()) return;
     if (!this.surveyId) return;
 
     if (this.currentIndex < this.pageResults.length - 1) {
@@ -431,6 +434,15 @@ export class SearchResultDetailComponent implements OnInit {
       case 'SUCCESS': return 'bg-success';
       case 'FAILURE': return 'bg-danger';
       default: return 'bg-light';
+    }
+  }
+
+  getCompletionStateDisplayText(completionState: string): string {
+    switch (completionState) {
+      case 'DONE': return 'Done';
+      case 'REVISIT': return 'Revisit';
+      case 'NOT_USABLE': return 'Not Usable';
+      default: return completionState;
     }
   }
 }

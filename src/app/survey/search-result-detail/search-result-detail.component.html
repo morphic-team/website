@@ -14,71 +14,35 @@
   <!-- Main Content -->
   <div *ngIf="!loading && !error && searchResult && survey">
     <!-- Header with omnibus navigation and actions -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <button type="button" class="btn btn-outline-secondary" (click)="goBackToResults()">
-        ← Back to Results
-      </button>
-      <h2 class="mb-0">Search Result {{ searchResult.id }}</h2>
-      <div class="d-flex align-items-center gap-2">
-        <button type="button" 
-                class="btn btn-outline-primary btn-sm" 
-                (click)="goToPrevious()" 
-                [disabled]="!hasPrevious || saving"
-                title="Navigate to previous search result">
-          ← Previous
-        </button>
-        <button type="button" 
-                class="btn btn-secondary btn-sm" 
-                (click)="revertChanges()" 
-                [disabled]="!hasUnsavedChanges || saving"
-                title="Discard all unsaved changes">
-          Revert Changes
-        </button>
-        <button type="button" 
-                class="btn btn-primary btn-sm" 
-                (click)="saveForm()" 
-                [disabled]="!hasUnsavedChanges || saving"
-                title="Save form data and completion state">
-          {{ saving ? 'Saving...' : 'Save Changes' }}
-        </button>
-        <button type="button" 
-                class="btn btn-danger btn-sm" 
-                (click)="saveAndNext('NOT_USABLE')" 
-                [disabled]="!hasNext || saving"
-                title="Set completion state to not usable, save changes and navigate to next result">
-          {{ saving ? 'Saving...' : 'Not Usable & Next' }}
-        </button>
-        <button type="button" 
-                class="btn btn-warning btn-sm" 
-                (click)="saveAndNext('REVISIT')" 
-                [disabled]="!hasNext || saving"
-                title="Set completion state to revisit, save changes and navigate to next result">
-          {{ saving ? 'Saving...' : 'Revisit & Next' }}
-        </button>
-        <button type="button" 
-                class="btn btn-success btn-sm" 
-                (click)="saveAndNext('DONE')" 
-                [disabled]="!hasNext || saving"
-                title="Set completion state to done, save changes and navigate to next result">
-          {{ saving ? 'Saving...' : 'Done & Next' }}
-        </button>
-        <button type="button" 
-                class="btn btn-outline-primary btn-sm" 
-                (click)="goToNext()" 
-                [disabled]="!hasNext || saving"
-                title="Navigate to next search result">
-          Next →
-        </button>
-      </div>
-    </div>
-
-    <div class="row">
+    <div class="row px-3">
       <!-- Search Result Details -->
       <div class="col-md-6 mb-4">
         <!-- Image Preview Card -->
         <div class="card mb-3">
-          <div class="card-header">
-            <h6 class="card-title mb-0">Image Preview</h6>
+          <div class="card-header d-flex justify-content-between align-items-center" style="min-height: 60px;">
+            <h5 class="card-title mb-0">Search Result #{{ searchResult.id }}</h5>
+            <div class="d-flex align-items-center gap-2">
+              <button type="button" 
+                      class="btn btn-outline-secondary btn-sm" 
+                      (click)="goBackToResults()"
+                      title="Return to search results list">
+                ← Back
+              </button>
+              <button type="button" 
+                      class="btn btn-outline-primary btn-sm" 
+                      (click)="goToPrevious()" 
+                      [disabled]="!hasPrevious || saving"
+                      title="Navigate to previous search result">
+                ← Previous
+              </button>
+              <button type="button" 
+                      class="btn btn-outline-primary btn-sm" 
+                      (click)="goToNext()" 
+                      [disabled]="!hasNext || saving"
+                      title="Navigate to next search result">
+                Next →
+              </button>
+            </div>
           </div>
           <div class="card-body text-center">
             <div class="image-container">
@@ -108,93 +72,112 @@
                 </small>
               </div>
             </div>
-          </div>
-        </div>
-
-        <!-- Duplicate Pool Card -->
-        <div class="card mb-3">
-          <div class="card-header">
-            <h6 class="card-title mb-0">Duplicate Pool</h6>
-          </div>
-          <div class="card-body">
-            <div *ngIf="searchResult.duplicatePool && searchResult.duplicatePool.length > 1">
-              <p class="text-muted small mb-2">All results identified as the same image ({{ searchResult.duplicatePool.length }} total):</p>
-              <ul class="list-unstyled mb-0">
-                <li *ngFor="let duplicate of searchResult.duplicatePool" class="mb-1">
-                  <a [routerLink]="['/surveys', surveyId, 'search-results', 'page', currentPage, 'result', duplicate.id]" 
-                     [queryParams]="duplicate.id !== searchResult.id ? { returnPage: (returnPage || currentPage), returnResult: (returnResultId || searchResult.id) } : {}"
-                     class="text-decoration-none"
-                     [ngClass]="{'fw-bold': duplicate.id === searchResult.id}">
-                    #{{ duplicate.id }}
-                  </a>
-                  <span *ngIf="duplicate.id === searchResult.id" class="badge bg-primary ms-1 small">current</span>
-                  <span *ngIf="!duplicate.duplicateOfId" class="badge bg-success ms-1 small">canonical</span>
-                  <span *ngIf="duplicate.duplicateOfId && duplicate.id !== searchResult.id" class="badge bg-secondary ms-1 small">duplicate</span>
-                  <span class="text-muted small ms-2">
-                    - {{ getDisplayUrl(duplicate.visibleLink) }}
-                  </span>
-                </li>
-              </ul>
+            
+            <!-- Search Result Metadata -->
+            <hr class="my-3">
+            <h6 class="fw-bold mb-2">Metadata</h6>
+            <table class="table table-sm table-borderless">
+              <tbody>
+                <tr>
+                  <td class="text-end fw-bold" style="width: 1%; white-space: nowrap; padding-right: 12px;">ID:</td>
+                  <td class="text-start">{{ searchResult.id }}</td>
+                </tr>
+                <tr>
+                  <td class="text-end fw-bold" style="width: 1%; white-space: nowrap; padding-right: 12px;">Search Query:</td>
+                  <td class="text-start"><span class="badge bg-info">{{ searchResult.search.name }}</span></td>
+                </tr>
+                <tr>
+                  <td class="text-end fw-bold" style="width: 1%; white-space: nowrap; padding-right: 12px;">Source Page:</td>
+                  <td class="text-start">
+                    <a [href]="searchResult.visibleLink" target="_blank" class="text-break link-external">
+                      {{ getDisplayUrl(searchResult.visibleLink) }}
+                      <i class="fa fa-external-link-alt ms-1" aria-hidden="true"></i>
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-end fw-bold" style="width: 1%; white-space: nowrap; padding-right: 12px;">Image URL:</td>
+                  <td class="text-start">
+                    <a [href]="searchResult.directLink" target="_blank" class="text-break link-external">
+                      {{ getDisplayUrl(searchResult.directLink) }}
+                      <i class="fa fa-external-link-alt ms-1" aria-hidden="true"></i>
+                    </a>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-end fw-bold" style="width: 1%; white-space: nowrap; padding-right: 12px;">Completion State:</td>
+                  <td class="text-start">
+                    <span class="badge" 
+                          [ngClass]="{
+                            'bg-success': searchResult.completionState === 'DONE',
+                            'bg-warning': searchResult.completionState === 'REVISIT',
+                            'bg-danger': searchResult.completionState === 'NOT_USABLE'
+                          }">
+                      {{ getCompletionStateDisplayText(searchResult.completionState) }}
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="text-end fw-bold" style="width: 1%; white-space: nowrap; padding-right: 12px;">Duplicate State:</td>
+                  <td class="text-start">
+                    <span *ngIf="searchResult.duplicateOfId">
+                      Duplicate of 
+                      <a [routerLink]="['/surveys', surveyId, 'search-results', 'page', currentPage, 'result', searchResult.duplicateOfId]" 
+                         [queryParams]="{ returnPage: (returnPage || currentPage), returnResult: (returnResultId || searchResult.id) }"
+                         class="text-decoration-none link-primary">
+                        #{{ searchResult.duplicateOfId }}
+                      </a>
+                    </span>
+                    <span *ngIf="!searchResult.duplicateOfId" class="badge" [ngClass]="getProcessingBadgeClass(searchResult.imageScrapedState)">
+                      {{ getProcessingStatusText(searchResult.imageScrapedState) }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <!-- Duplicate Pool Section -->
+            <hr class="my-3">
+            <h6 class="fw-bold mb-2" 
+                *ngIf="searchResult.duplicatePool && searchResult.duplicatePool.length > 1"
+                title="All search results identified as the same image">
+              Duplicate Pool ({{ searchResult.duplicatePool.length }} total)
+            </h6>
+            <h6 class="fw-bold mb-2" 
+                *ngIf="!searchResult.duplicatePool || searchResult.duplicatePool.length <= 1">
+              Duplicate Pool
+            </h6>
+            <div *ngIf="searchResult.duplicatePool && searchResult.duplicatePool.length > 0">
+              <table class="table table-sm table-borderless mb-0">
+                <tbody>
+                  <tr *ngFor="let duplicate of searchResult.duplicatePool"
+                      [ngClass]="{'table-info': duplicate.id === searchResult.id}">
+                    <td class="text-end" style="width: 1%; white-space: nowrap; padding-right: 8px;">
+                      <a [routerLink]="['/surveys', surveyId, 'search-results', 'page', currentPage, 'result', duplicate.id]" 
+                         [queryParams]="duplicate.id !== searchResult.id ? { returnPage: (returnPage || currentPage), returnResult: (returnResultId || searchResult.id) } : {}"
+                         class="text-decoration-none"
+                         [ngClass]="{'fw-bold': duplicate.id === searchResult.id}">
+                        #{{ duplicate.id }}
+                      </a>
+                    </td>
+                    <td class="text-center" style="width: 140px; padding-left: 8px; padding-right: 8px;">
+                      <span *ngIf="!duplicate.duplicateOfId" class="badge bg-success small">canonical</span>
+                      <span *ngIf="duplicate.duplicateOfId" class="badge bg-secondary small">duplicate</span>
+                    </td>
+                    <td class="text-start" style="padding-left: 8px;">
+                      <span class="text-muted small">
+                        {{ getDisplayUrl(duplicate.visibleLink) }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-            <div *ngIf="!searchResult.duplicatePool || searchResult.duplicatePool.length <= 1">
+            <div *ngIf="!searchResult.duplicatePool || searchResult.duplicatePool.length === 0">
               <p class="text-muted small mb-0">
-                Unique image. When the background processor identifies images with identical content, 
-                all matching results will be listed here.
+                This search result has not been processed for duplicate detection yet. Once processed, 
+                it will appear here as canonical, and any duplicates found will be listed as well.
               </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Metadata Card -->
-        <div class="card">
-          <div class="card-header">
-            <h5 class="card-title mb-0">Search Result Information</h5>
-          </div>
-          <div class="card-body">
-            <div class="mb-3">
-              <strong>ID:</strong> {{ searchResult.id }}
-            </div>
-            <div class="mb-3">
-              <strong>Search Query:</strong> 
-              <span class="badge bg-info">{{ searchResult.search.name }}</span>
-            </div>
-            <div class="mb-3">
-              <strong>Source Page:</strong> 
-              <a [href]="searchResult.visibleLink" target="_blank" class="text-break link-external">
-                {{ getDisplayUrl(searchResult.visibleLink) }}
-                <i class="fa fa-external-link-alt ms-1" aria-hidden="true"></i>
-              </a>
-            </div>
-            <div class="mb-3">
-              <strong>Image URL:</strong> 
-              <a [href]="searchResult.directLink" target="_blank" class="text-break link-external">
-                {{ getDisplayUrl(searchResult.directLink) }}
-                <i class="fa fa-external-link-alt ms-1" aria-hidden="true"></i>
-              </a>
-            </div>
-            <div class="mb-3">
-              <strong>Status:</strong> 
-              <span class="badge" 
-                    [ngClass]="{
-                      'bg-success': searchResult.completionState === 'DONE',
-                      'bg-warning': searchResult.completionState === 'REVISIT',
-                      'bg-danger': searchResult.completionState === 'NOT_USABLE'
-                    }">
-                {{ searchResult.completionState }}
-              </span>
-              <span *ngIf="searchResult.duplicateOfId" class="ms-2">
-                <a [routerLink]="['/surveys', surveyId, 'search-results', 'page', currentPage, 'result', searchResult.duplicateOfId]" 
-                   [queryParams]="{ returnPage: (returnPage || currentPage), returnResult: (returnResultId || searchResult.id) }"
-                   class="text-decoration-none link-primary">
-                  Duplicate of #{{ searchResult.duplicateOfId }}
-                </a>
-              </span>
-            </div>
-            <div class="mb-3">
-              <strong>Processing:</strong> 
-              <span class="badge" [ngClass]="getProcessingBadgeClass(searchResult.imageScrapedState)">
-                {{ getProcessingStatusText(searchResult.imageScrapedState) }}
-              </span>
             </div>
           </div>
         </div>
@@ -208,16 +191,21 @@
           'completion-state-done': selectedCompletionState === 'DONE',
           'completion-state-not-usable': selectedCompletionState === 'NOT_USABLE'
         }">
-          <div class="card-header">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h5 class="card-title mb-0">{{ survey.name }} - Data Entry</h5>
-              <div *ngIf="hasUnsavedChanges" class="d-flex align-items-center gap-2">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Survey for Search Result #{{ searchResult.id }}</h5>
+            <div *ngIf="hasUnsavedChanges" class="d-flex align-items-center gap-2">
                 <span class="text-warning">
                   <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
                   Unsaved changes
                 </span>
+                <button type="button" 
+                        class="btn btn-outline-secondary btn-xs" 
+                        (click)="revertChanges()" 
+                        [disabled]="saving"
+                        title="Discard all unsaved changes">
+                  Revert Changes
+                </button>
               </div>
-            </div>
           </div>
           <div class="card-body">
             <!-- Completion State Selector -->
@@ -234,9 +222,9 @@
                 (ngModelChange)="onCompletionStateChange()"
                 [disabled]="saving"
                 [ngClass]="{'changed-field': selectedCompletionState !== originalCompletionState}">
-                <option value="REVISIT">REVISIT</option>
-                <option value="DONE">DONE</option>
-                <option value="NOT_USABLE">NOT_USABLE</option>
+                <option value="REVISIT">Revisit</option>
+                <option value="DONE">Done</option>
+                <option value="NOT_USABLE">Not Usable</option>
               </select>
             </div>
 
@@ -249,6 +237,40 @@
               (formSubmit)="onFormSubmit($event)"
               (fieldChange)="onFieldChange($event)">
             </app-survey-form>
+            
+            <!-- Form Actions -->
+            <div class="d-flex justify-content-end align-items-center gap-2 mt-4 pt-3 border-top">
+              <button type="button" 
+                      class="btn btn-primary btn-sm" 
+                      (click)="saveForm()" 
+                      [disabled]="!hasUnsavedChanges || saving"
+                      title="Save form data and completion state">
+                {{ saving ? 'Saving...' : 'Save Changes' }}
+              </button>
+              <div class="btn-group" role="group">
+                <button type="button" 
+                        class="btn btn-danger btn-sm" 
+                        (click)="saveAndNext('NOT_USABLE')" 
+                        [disabled]="!hasNext || saving"
+                        title="Set completion state to not usable, save changes and navigate to next result">
+                  {{ saving ? 'Saving...' : 'Not Usable & Next' }}
+                </button>
+                <button type="button" 
+                        class="btn btn-warning btn-sm" 
+                        (click)="saveAndNext('REVISIT')" 
+                        [disabled]="!hasNext || saving"
+                        title="Set completion state to revisit, save changes and navigate to next result">
+                  {{ saving ? 'Saving...' : 'Revisit & Next' }}
+                </button>
+                <button type="button" 
+                        class="btn btn-success btn-sm" 
+                        (click)="saveAndNext('DONE')" 
+                        [disabled]="!hasNext || saving"
+                        title="Set completion state to done, save changes and navigate to next result">
+                  {{ saving ? 'Saving...' : 'Done & Next' }}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { SignInComponent } from './sign-in/sign-in.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { AuthGuard } from './auth.guard';
+import { UnsavedChangesGuard } from './survey/guards/unsaved-changes.guard';
 import { SurveyListComponent } from './survey/surveys-list/surveys-list.component';
 import { SurveyDetailComponent } from './survey/survey-detail/survey-detail.component';
 import { SearchResultsListComponent } from './survey/search-results-list/search-results-list.component';
@@ -48,7 +49,8 @@ export const routes: Routes = [
       {
         path: 'search-results/page/:page/result/:resultId',
         component: SearchResultDetailComponent,
-        canActivate: [AuthGuard]
+        canActivate: [AuthGuard],
+        canDeactivate: [UnsavedChangesGuard]
       },
       {
         path: 'search-results/:resultId',

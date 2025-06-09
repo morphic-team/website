@@ -28,22 +28,23 @@
 
 /* Image display styling */
 .image-container {
-  min-height: 100px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #f8f9fa;
 }
 
 .search-result-image {
   max-height: 300px;
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease;
 }
 
-.search-result-image:hover {
-  transform: scale(1.02);
-  cursor: pointer;
+/* Form card header consistent height */
+.col-md-6:last-child .card-header {
+  min-height: 60px;
 }
 
 /* External link styling */
