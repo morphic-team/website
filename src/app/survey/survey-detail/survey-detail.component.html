@@ -1,23 +1,30 @@
-<div class="container-fluid">
-    <div class="card" *ngIf="survey$ | async as survey">
-      <div class="card-header">
-        <h5 class="mb-0">{{ survey.name }} ({{ survey.id }})</h5>
-      </div>
-      <div class="card-body p-0">
-        <ul class="nav nav-tabs">
-          <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/surveys', survey.id, 'search-results']" routerLinkActive="active">Search Results</a>
+<div class="py-4">
+  <div class="card" *ngIf="survey$ | async as survey">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item">
+            <a routerLink="/surveys">All Surveys</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/surveys', survey.id, 'searches']" routerLinkActive="active">Searches</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/surveys', survey.id, 'export-results']" routerLinkActive="active">Export Results</a>
-          </li>
-        </ul>
-        <div class="p-3">
-          <router-outlet></router-outlet>  <!-- Placeholder for nested routes -->
-        </div>
+          <li class="breadcrumb-item active" aria-current="page">{{ survey.name }}</li>
+        </ol>
+      </nav>
+    </div>
+    <div class="card-body">
+      <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/surveys', survey.id, 'search-results']" routerLinkActive="active">Search Results</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/surveys', survey.id, 'searches']" routerLinkActive="active">Searches</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/surveys', survey.id, 'export-results']" routerLinkActive="active">Export Results</a>
+        </li>
+      </ul>
+      <div class="pt-3">
+        <router-outlet></router-outlet>
       </div>
     </div>
   </div>
+</div>
