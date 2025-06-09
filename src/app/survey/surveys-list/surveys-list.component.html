@@ -40,7 +40,7 @@
             <tbody>
               <tr *ngFor="let survey of surveys">
                 <td>
-                  <a [routerLink]="['/surveys', survey.id, 'search-results']" class="text-decoration-none fw-semibold">
+                  <a [routerLink]="['/surveys', survey.id]" class="text-decoration-none fw-semibold">
                     {{ survey.name }}
                   </a>
                 </td>

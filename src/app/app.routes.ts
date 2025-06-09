@@ -38,6 +38,11 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       {
+        path: '',
+        redirectTo: 'searches',
+        pathMatch: 'full'
+      },
+      {
         path: 'search-results/page/:page',
         component: SearchResultsListComponent,
         canActivate: [AuthGuard]

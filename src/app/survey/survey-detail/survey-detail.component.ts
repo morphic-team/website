@@ -41,4 +41,10 @@ export class SurveyDetailComponent implements OnInit {
     const match = url.match(/\/result\/(\d+)/);
     return match ? match[1] : '';
   }
+
+  isCreateSearchRoute(): boolean {
+    // Check if current route is the create search page
+    const url = this.router.url;
+    return url.includes('/searches/create');
+  }
 }
