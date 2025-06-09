@@ -43,9 +43,9 @@
     <table class="table table-hover">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Source Page</th>
-          <th>Image Filename</th>
+          <th style="width: 80px;">ID</th>
+          <th class="truncatable-column">Source Page</th>
+          <th class="truncatable-column">Image Filename</th>
           <th class="text-center" style="width: 160px;">Completion State</th>
           <th class="text-center" style="width: 200px;">Duplicate State</th>
         </tr>
@@ -62,8 +62,8 @@
               'table-info': searchResult.id === highlightResultId
             }">
           <td>{{ searchResult.id }}</td>
-          <td>{{ searchResult.visibleLink }}</td>
-          <td>{{ getImageFilename(searchResult.directLink) }}</td>
+          <td class="truncatable-text" [title]="searchResult.visibleLink">{{ searchResult.visibleLink }}</td>
+          <td class="truncatable-text" [title]="getImageFilename(searchResult.directLink)">{{ getImageFilename(searchResult.directLink) }}</td>
           <td class="text-center">
             <span class="badge badge-fixed-width"
                   [ngClass]="{

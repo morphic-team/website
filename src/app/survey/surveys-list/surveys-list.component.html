@@ -38,11 +38,11 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let survey of surveys">
+              <tr *ngFor="let survey of surveys" 
+                  [routerLink]="['/surveys', survey.id]"
+                  style="cursor: pointer">
                 <td>
-                  <a [routerLink]="['/surveys', survey.id]" class="text-decoration-none fw-semibold">
-                    {{ survey.name }}
-                  </a>
+                  <span class="fw-semibold">{{ survey.name }}</span>
                 </td>
                 <td>{{ survey.comments }}</td>
               </tr>
