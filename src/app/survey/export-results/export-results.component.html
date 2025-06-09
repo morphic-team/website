@@ -1,4 +1,4 @@
-<div>
+<div class="px-3">
   <div *ngIf="isLoading" class="text-center py-5">
     <div class="spinner-border" role="status">
       <span class="visually-hidden">Loading...</span>
@@ -32,30 +32,26 @@
       </div>
     </div>
 
-    <div class="alert alert-info" role="alert">
-      <i class="bi bi-info-circle me-2"></i>
-      The exported CSV file will contain all search results with their associated field data.
+    <div *ngIf="resultsCount === 0" class="text-muted text-center">
+      <small>No results to export yet</small>
     </div>
+  </div>
 
-    <div class="text-center">
-      <button 
-        class="btn btn-primary" 
-        (click)="downloadCSV()"
-        [disabled]="isDownloading || resultsCount === 0"
-      >
-        <span *ngIf="!isDownloading">
-          <i class="bi bi-download me-2"></i>
-          Download as CSV
-        </span>
-        <span *ngIf="isDownloading">
-          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-          Downloading...
-        </span>
-      </button>
-      
-      <div *ngIf="resultsCount === 0" class="text-muted mt-2">
-        <small>No results to export yet</small>
-      </div>
-    </div>
+  <!-- Action Row -->
+  <div class="text-end mt-3 px-3">
+    <button 
+      class="btn btn-primary" 
+      (click)="downloadCSV()"
+      [disabled]="isDownloading || resultsCount === 0"
+    >
+      <span *ngIf="!isDownloading">
+        <i class="bi bi-download me-2"></i>
+        Download as CSV
+      </span>
+      <span *ngIf="isDownloading">
+        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        Downloading...
+      </span>
+    </button>
   </div>
 </div>
