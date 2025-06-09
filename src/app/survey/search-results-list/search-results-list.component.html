@@ -1,65 +1,64 @@
-<div class="container-fluid">
-  <form (ngSubmit)="filterSearchResults()">
-    <div class="mb-3">
-      <input type="text" [(ngModel)]="filter" name="filter" class="form-control" placeholder="Filter" />
-    </div>
-  </form>
+<div>
+  <!-- Results Table -->
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Visible Link</th>
+          <th>Status</th>
+          <th>Processing</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let searchResult of searchResults | paginate: { id: 'searchResults', itemsPerPage: perPage, currentPage: currentPage, totalItems: totalSearchResults }" 
+            [routerLink]="['/surveys', surveyId, 'search-results', 'page', currentPage, 'result', searchResult.id]"
+            [attr.data-result-id]="searchResult.id"
+            style="cursor: pointer"
+            [ngClass]="{
+              'table-success': searchResult.completionState === 'DONE',
+              'table-warning': searchResult.completionState === 'REVISIT',
+              'table-danger': searchResult.completionState === 'NOT_USABLE',
+              'table-info': searchResult.id === highlightResultId
+            }">
+          <td>{{ searchResult.id }}</td>
+          <td>{{ searchResult.visibleLink }}</td>
+          <td>
+            <span class="badge"
+                  [ngClass]="{
+                    'bg-success': searchResult.completionState === 'DONE',
+                    'bg-warning': searchResult.completionState === 'REVISIT',
+                    'bg-danger': searchResult.completionState === 'NOT_USABLE'
+                  }">
+              {{ searchResult.completionState }}
+            </span>
+            <span *ngIf="searchResult.duplicateOfId" class="ms-2 small">
+              <a [routerLink]="['/surveys', surveyId, 'search-results', 'page', currentPage, 'result', searchResult.duplicateOfId]" 
+                 [queryParams]="{ returnPage: currentPage, returnResult: searchResult.id }"
+                 class="text-decoration-none link-primary"
+                 (click)="$event.stopPropagation()">
+                Duplicate of #{{ searchResult.duplicateOfId }}
+              </a>
+            </span>
+          </td>
+          <td>
+            <span class="badge" [ngClass]="getProcessingBadgeClass(searchResult.imageScrapedState)">
+              {{ getProcessingStatusText(searchResult.imageScrapedState) }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-  <pagination-controls 
-    (pageChange)="onPageChange($event)" 
-    [id]="'searchResults'" 
-    [maxSize]="5"
-    [directionLinks]="true"
-    [autoHide]="true">
-  </pagination-controls>
-
-  <table class="table table-hover table-bordered">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Visible Link</th>
-        <th>Status</th>
-        <th>Processing</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let searchResult of searchResults | paginate: { id: 'searchResults', itemsPerPage: perPage, currentPage: currentPage, totalItems: totalSearchResults }" 
-          [routerLink]="['/surveys', surveyId, 'search-results', 'page', currentPage, 'result', searchResult.id]"
-          [attr.data-result-id]="searchResult.id"
-          style="cursor: pointer"
-          [ngClass]="{
-            'table-success': searchResult.completionState === 'DONE',
-            'table-warning': searchResult.completionState === 'REVISIT',
-            'table-danger': searchResult.completionState === 'NOT_USABLE',
-            'table-info': searchResult.id === highlightResultId
-          }">
-        <td>{{ searchResult.id }}</td>
-        <td>{{ searchResult.visibleLink }}</td>
-        <td>
-          <span class="badge"
-                [ngClass]="{
-                  'bg-success': searchResult.completionState === 'DONE',
-                  'bg-warning': searchResult.completionState === 'REVISIT',
-                  'bg-danger': searchResult.completionState === 'NOT_USABLE'
-                }">
-            {{ searchResult.completionState }}
-          </span>
-          <span *ngIf="searchResult.duplicateOfId" class="ms-2 small">
-            <a [routerLink]="['/surveys', surveyId, 'search-results', 'page', currentPage, 'result', searchResult.duplicateOfId]" 
-               [queryParams]="{ returnPage: currentPage, returnResult: searchResult.id }"
-               class="text-decoration-none link-primary"
-               (click)="$event.stopPropagation()">
-              Duplicate of #{{ searchResult.duplicateOfId }}
-            </a>
-          </span>
-        </td>
-        <td>
-          <span class="badge" [ngClass]="getProcessingBadgeClass(searchResult.imageScrapedState)">
-            {{ getProcessingStatusText(searchResult.imageScrapedState) }}
-          </span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
+  <!-- Pagination -->
+  <div class="d-flex justify-content-center mt-3">
+    <pagination-controls 
+      (pageChange)="onPageChange($event)" 
+      [id]="'searchResults'" 
+      [maxSize]="5"
+      [directionLinks]="true"
+      [autoHide]="true">
+    </pagination-controls>
+  </div>
 </div>
