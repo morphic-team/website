@@ -47,6 +47,9 @@ export class SearchResultDetailComponent implements OnInit, CanComponentDeactiva
   // Image loading state
   imageLoaded: boolean = false;
   imageError: boolean = false;
+  
+  // Image source switching
+  showCachedImage: boolean = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -110,6 +113,7 @@ export class SearchResultDetailComponent implements OnInit, CanComponentDeactiva
       // Reset image loading state
       this.imageLoaded = false;
       this.imageError = false;
+      this.showCachedImage = true;
       
       // Find current result's index in the page
       this.currentIndex = this.pageResults.findIndex(r => r.id === Number(this.resultId));
@@ -444,5 +448,25 @@ export class SearchResultDetailComponent implements OnInit, CanComponentDeactiva
       case 'NOT_USABLE': return 'Not Usable';
       default: return completionState;
     }
+  }
+
+  getCurrentImageSrc(): string {
+    if (!this.searchResult) return '';
+    
+    if (this.showCachedImage && this.searchResult.cachedImageUrl) {
+      return this.searchResult.cachedImageUrl;
+    } else {
+      return this.searchResult.directLink;
+    }
+  }
+
+  toggleImageSource(): void {
+    this.showCachedImage = !this.showCachedImage;
+    this.imageLoaded = false;
+    this.imageError = false;
+  }
+
+  get hasCachedImage(): boolean {
+    return !!(this.searchResult && this.searchResult.cachedImageUrl);
   }
 }

@@ -46,7 +46,7 @@
           </div>
           <div class="card-body text-center">
             <div class="image-container">
-              <img [src]="searchResult.directLink" 
+              <img [src]="getCurrentImageSrc()" 
                    [alt]="'Search result from ' + searchResult.search.name"
                    class="img-fluid search-result-image"
                    (load)="onImageLoad()"
@@ -63,13 +63,37 @@
               
               <!-- Error fallback -->
               <div *ngIf="imageError" class="text-muted py-3">
-                <i class="fa fa-image" aria-hidden="true"></i>
-                <p class="mb-0">Image could not be loaded</p>
-                <small>
-                  <a [href]="searchResult.directLink" target="_blank" class="text-decoration-none">
-                    View original →
-                  </a>
-                </small>
+                <!-- Original image failed -->
+                <div *ngIf="!showCachedImage">
+                  <i class="bi bi-image" aria-hidden="true"></i>
+                  <p class="mb-0">Image could not be loaded</p>
+                  <small>
+                    <a [href]="searchResult.visibleLink" target="_blank" class="text-decoration-none">
+                      Open search result source page →
+                    </a>
+                  </small>
+                </div>
+                
+                <!-- Archived image failed (unexpected error) -->
+                <div *ngIf="showCachedImage" class="text-danger">
+                  <p class="mb-0">Failed to load archived image</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Image source toggle -->
+            <div *ngIf="hasCachedImage" class="text-center mt-2">
+              <div class="d-inline-flex align-items-center gap-2">
+                <span class="small text-muted">Archived</span>
+                <div class="form-check form-switch mb-0">
+                  <input class="form-check-input" 
+                         type="checkbox" 
+                         role="switch"
+                         [checked]="!showCachedImage"
+                         (change)="toggleImageSource()"
+                         [disabled]="!imageLoaded && !imageError">
+                </div>
+                <span class="small text-muted">Live</span>
               </div>
             </div>
             

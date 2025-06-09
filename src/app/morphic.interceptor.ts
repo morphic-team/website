@@ -2,9 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { StorageService } from './services/storage.service';
 
 @Injectable()
 export class MorphicInterceptor implements HttpInterceptor {
+  constructor(private storageService: StorageService) {}
+
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // Transform request body from camelCase to snake_case
     let transformedReq = req;
@@ -12,6 +15,16 @@ export class MorphicInterceptor implements HttpInterceptor {
       const transformedBody = this.transformRequestBody(req.body);
       transformedReq = req.clone({
         body: transformedBody
+      });
+    }
+
+    // Add session authentication header if available
+    const session = this.storageService.getSession();
+    if (session && session['token']) {
+      transformedReq = transformedReq.clone({
+        setHeaders: {
+          'X-Session-Token': session['token']
+        }
       });
     }
 
