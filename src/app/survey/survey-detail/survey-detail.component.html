@@ -10,8 +10,8 @@
         </ol>
       </nav>
     </div>
-    <div class="card-body">
-      <ul class="nav nav-tabs card-header-tabs">
+    <div class="card-body p-0">
+      <ul class="nav nav-tabs nav-fill">
         <li class="nav-item">
           <a class="nav-link" [routerLink]="['/surveys', survey.id, 'search-results']" routerLinkActive="active">Search Results</a>
         </li>
@@ -22,8 +22,10 @@
           <a class="nav-link" [routerLink]="['/surveys', survey.id, 'export-results']" routerLinkActive="active">Export Results</a>
         </li>
       </ul>
-      <div class="pt-3">
-        <router-outlet></router-outlet>
+      <div class="tab-content">
+        <div class="tab-pane fade show active p-3">
+          <router-outlet></router-outlet>
+        </div>
       </div>
     </div>
   </div>
