@@ -13,16 +13,46 @@ import { UserService } from '../services/user.service';
 export class SignInComponent {
   email = '';
   password = '';
+  errorMessage = '';
+  isSubmitting = false;
 
   constructor(private userService: UserService, private router: Router) {}
 
   signIn() {
+    this.errorMessage = '';
+    
+    // Basic validation
+    if (!this.email || !this.password) {
+      this.errorMessage = 'Please fill in all fields.';
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.email)) {
+      this.errorMessage = 'Please enter a valid email address.';
+      return;
+    }
+
+    this.isSubmitting = true;
+    
     this.userService.signIn(this.email, this.password).subscribe({
       next: (response) => {
+        this.isSubmitting = false;
         this.router.navigate(['/surveys']);  // Redirect after successful sign-in
       },
       error: (err) => {
-        // this.notify.showMessage({ message: 'Sign in failed. Please try again.', duration: 0 });
+        this.isSubmitting = false;
+        // Extract error message from response
+        if (err.error && err.error.error) {
+          this.errorMessage = err.error.error;
+        } else if (err.status === 401) {
+          this.errorMessage = 'Invalid email or password';
+        } else if (err.status === 400) {
+          this.errorMessage = 'Please enter both email and password';
+        } else {
+          this.errorMessage = 'Sign in failed. Please try again.';
+        }
       }
     });
   }

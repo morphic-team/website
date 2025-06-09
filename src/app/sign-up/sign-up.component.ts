@@ -15,6 +15,7 @@ export class SignUpComponent {
   password = '';
   confirmPassword = '';
   errorMessage = '';
+  isSubmitting = false;
 
   constructor(private userService: UserService, private router: Router) {}
 
@@ -22,7 +23,7 @@ export class SignUpComponent {
     this.errorMessage = '';
     
     // Basic validation
-    if (!this.email || !this.password) {
+    if (!this.email || !this.password || !this.confirmPassword) {
       this.errorMessage = 'Please fill in all fields.';
       return;
     }
@@ -44,12 +45,24 @@ export class SignUpComponent {
       return;
     }
 
+    this.isSubmitting = true;
     this.userService.signUp(this.email, this.password).subscribe({
       next: (response) => {
+        this.isSubmitting = false;
         this.router.navigate(['/surveys']);  // Redirect after successful sign-up
       },
       error: (err) => {
-        this.errorMessage = 'Sign up failed. This email may already be registered.';
+        this.isSubmitting = false;
+        // Extract error message from response
+        if (err.error && err.error.error) {
+          this.errorMessage = err.error.error;
+        } else if (err.status === 409) {
+          this.errorMessage = 'An account with this email address already exists';
+        } else if (err.status === 400) {
+          this.errorMessage = 'Please check your input and try again';
+        } else {
+          this.errorMessage = 'Sign up failed. Please try again.';
+        }
       }
     });
   }
