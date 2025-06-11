@@ -52,6 +52,8 @@ export interface SessionAndUser {
 
 export interface UserPreferences {
   dismissedExtensionNotice?: boolean;
+  dismissedExtensionVersion?: string; // Track which version was dismissed
+  lastSeenExtensionStatus?: 'missing' | 'installed'; // Track extension state changes
   // Add other preferences here as needed
 }
 
@@ -67,7 +69,7 @@ export class StorageService {
   private readonly STORAGE_VERSION_KEY = 'morphic_storage_version';
   private readonly SESSION_AND_USER_KEY = 'session_and_user';
   private readonly USER_PREFERENCES_KEY = 'user_preferences';
-  private readonly CURRENT_VERSION = 2;
+  private readonly CURRENT_VERSION = 3;
   
   private get migrations(): StorageMigration[] {
     return [
@@ -90,6 +92,20 @@ export class StorageService {
           // Initialize user preferences if not present
           if (!data['user_preferences']) {
             data['user_preferences'] = {};
+          }
+          return data;
+        }
+      },
+      {
+        version: 3,
+        migrate: (data) => {
+          // Reset extension dismissal state since we're adding version tracking
+          if (data['user_preferences'] && typeof data['user_preferences'] === 'object') {
+            // Remove old dismissal to ensure users see new extension version checking
+            delete data['user_preferences']['dismissedExtensionNotice'];
+            // Initialize new fields
+            data['user_preferences']['dismissedExtensionVersion'] = undefined;
+            data['user_preferences']['lastSeenExtensionStatus'] = undefined;
           }
           return data;
         }
@@ -266,6 +282,54 @@ export class StorageService {
   updateUserPreference<K extends keyof UserPreferences>(key: K, value: UserPreferences[K]): void {
     const preferences = this.getUserPreferences();
     preferences[key] = value;
+    this.setUserPreferences(preferences);
+  }
+
+  // Extension dismissal logic with smart reset
+  shouldShowExtensionNotice(currentVersion: string | null, extensionInstalled: boolean): boolean {
+    const preferences = this.getUserPreferences();
+    const currentStatus = extensionInstalled ? 'installed' : 'missing';
+    
+    // Reset dismissal if extension status changed
+    if (preferences.lastSeenExtensionStatus && preferences.lastSeenExtensionStatus !== currentStatus) {
+      this.resetExtensionDismissal();
+      return true;
+    }
+    
+    // Reset dismissal if extension version changed
+    if (extensionInstalled && preferences.dismissedExtensionVersion && preferences.dismissedExtensionVersion !== currentVersion) {
+      this.resetExtensionDismissal();
+      return true;
+    }
+    
+    // Show notice if not dismissed or if problem exists
+    return !preferences.dismissedExtensionNotice;
+  }
+
+  dismissExtensionNotice(currentVersion: string | null, extensionInstalled: boolean): void {
+    const preferences = this.getUserPreferences();
+    preferences.dismissedExtensionNotice = true;
+    preferences.dismissedExtensionVersion = currentVersion || undefined;
+    preferences.lastSeenExtensionStatus = extensionInstalled ? 'installed' : 'missing';
+    this.setUserPreferences(preferences);
+  }
+
+  updateExtensionStatus(currentVersion: string | null, extensionInstalled: boolean): void {
+    // Update last seen status without dismissing - used to track state changes
+    const preferences = this.getUserPreferences();
+    const currentStatus = extensionInstalled ? 'installed' : 'missing';
+    
+    // Only update if status actually changed
+    if (preferences.lastSeenExtensionStatus !== currentStatus) {
+      preferences.lastSeenExtensionStatus = currentStatus;
+      this.setUserPreferences(preferences);
+    }
+  }
+
+  private resetExtensionDismissal(): void {
+    const preferences = this.getUserPreferences();
+    preferences.dismissedExtensionNotice = false;
+    preferences.dismissedExtensionVersion = undefined;
     this.setUserPreferences(preferences);
   }
 

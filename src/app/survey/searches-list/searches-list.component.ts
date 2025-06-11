@@ -3,6 +3,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SearchesService, Search } from '../services/searches.service';
 import { StorageService } from '../../services/storage.service';
+import { ExtensionService, ExtensionStatus } from '../../services/extension.service';
 import { GatherResultsModalComponent } from '../gather-results-modal/gather-results-modal.component';
 
 @Component({
@@ -16,24 +17,30 @@ export class SearchesListComponent implements OnInit {
   
   searches: Search[] = [];
   surveyId: string | null = null;
-  showExtensionNotice = true;
+  showExtensionNotice = false;
+  extensionStatus: ExtensionStatus = {
+    isChecking: false,
+    isInstalled: false,
+    version: '',
+    isChromeBrowser: false
+  };
   isRefreshing = false;
 
   constructor(
     private route: ActivatedRoute,
     private searchesService: SearchesService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private extensionService: ExtensionService
   ) {}
 
   ngOnInit(): void {
-    // Check if user has dismissed the extension notice
-    const preferences = this.storageService.getUserPreferences();
-    this.showExtensionNotice = !preferences.dismissedExtensionNotice;
-    
     this.surveyId = this.route.parent?.snapshot.paramMap.get('id') || null;
     if (this.surveyId) {
       this.fetchSearches();
     }
+    
+    // Check extension status
+    this.checkExtensionVersion();
   }
 
   fetchSearches(): void {
@@ -61,8 +68,30 @@ export class SearchesListComponent implements OnInit {
     this.fetchSearches();
   }
 
+  private checkExtensionVersion() {
+    this.extensionService.checkExtensionStatus().subscribe(status => {
+      this.extensionStatus = status;
+      
+      // Update extension status and check if notice should show
+      this.storageService.updateExtensionStatus(status.version || null, status.isInstalled);
+      this.showExtensionNotice = this.storageService.shouldShowExtensionNotice(status.version || null, status.isInstalled) && status.isChromeBrowser;
+    });
+  }
+  
+  get isExtensionVersionValid(): boolean {
+    return this.extensionService.isExtensionValid(this.extensionStatus);
+  }
+  
+  get isExtensionOutdated(): boolean {
+    return this.extensionStatus.isInstalled && !this.extensionService.isVersionValid(this.extensionStatus.version);
+  }
+  
+  get REQUIRED_EXTENSION_VERSION(): string {
+    return this.extensionService.REQUIRED_EXTENSION_VERSION;
+  }
+
   dismissExtensionNotice(): void {
     this.showExtensionNotice = false;
-    this.storageService.updateUserPreference('dismissedExtensionNotice', true);
+    this.storageService.dismissExtensionNotice(this.extensionStatus.version || null, this.extensionStatus.isInstalled);
   }
 }

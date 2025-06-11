@@ -2,6 +2,7 @@ import { Component, ElementRef, ViewChild, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SearchesService, Search } from '../services/searches.service';
+import { ExtensionService, ExtensionStatus } from '../../services/extension.service';
 
 declare var bootstrap: any;
 
@@ -19,17 +20,24 @@ export class GatherResultsModalComponent {
   resultLimit: number = 100;
   isGenerating: boolean = false;
   error: string = '';
-  extensionInstalled: boolean = true;  // Hardcoded to true for now
+  extensionStatus: ExtensionStatus = {
+    isChecking: false,
+    isInstalled: false,
+    version: '',
+    isChromeBrowser: false
+  };
   googleSearchUrl: string = '';
   
   private modalInstance: any;
   private debounceTimer: any;
 
-  constructor(private searchesService: SearchesService) {}
+  constructor(
+    private searchesService: SearchesService,
+    private extensionService: ExtensionService
+  ) {}
 
   ngAfterViewInit() {
     this.modalInstance = new bootstrap.Modal(this.modalElement.nativeElement);
-    // Extension check removed - hardcoded to true in property initialization
   }
 
   show(search: Search) {
@@ -37,8 +45,10 @@ export class GatherResultsModalComponent {
     this.error = '';
     this.resultLimit = 100;
     this.googleSearchUrl = '';
-    // Extension check removed - hardcoded to true
     this.modalInstance.show();
+    
+    // Check extension when modal opens
+    this.checkExtensionVersion();
     
     // Defer URL generation to avoid change detection errors
     setTimeout(() => {
@@ -108,10 +118,26 @@ export class GatherResultsModalComponent {
     return true;
   }
 
-  private checkExtensionInstalled() {
-    // TODO: Implement proper extension detection
-    // For now, assume extension is installed
-    this.extensionInstalled = true;
+  private checkExtensionVersion() {
+    this.extensionService.checkExtensionStatus().subscribe(status => {
+      this.extensionStatus = status;
+    });
+  }
+  
+  get isExtensionVersionValid(): boolean {
+    return this.extensionService.isExtensionValid(this.extensionStatus);
+  }
+  
+  get isExtensionOutdated(): boolean {
+    return this.extensionStatus.isInstalled && !this.extensionService.isVersionValid(this.extensionStatus.version);
+  }
+  
+  get REQUIRED_EXTENSION_VERSION(): string {
+    return this.extensionService.REQUIRED_EXTENSION_VERSION;
+  }
+
+  isChromeBrowser(): boolean {
+    return this.extensionService.isChromeBrowser();
   }
 
   private generateUrl() {
