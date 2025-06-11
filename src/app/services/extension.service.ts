@@ -12,7 +12,7 @@ export interface ExtensionStatus {
   providedIn: 'root'
 })
 export class ExtensionService {
-  readonly REQUIRED_EXTENSION_VERSION = '0.0.14';
+  readonly REQUIRED_EXTENSION_VERSION = '1.0.0';
   readonly PRODUCTION_EXTENSION_ID = 'fhigbmfhhlpkjbdamhjmfajhkfbkkgah';
 
   checkExtensionStatus(): Observable<ExtensionStatus> {
