@@ -18,6 +18,12 @@
 
   <!-- Table State -->
   <div *ngIf="searches.length > 0">
+    <div class="d-flex justify-content-end mb-3 me-3">
+      <button class="btn btn-outline-secondary btn-sm" (click)="refreshSearches()" [disabled]="isRefreshing">
+        <span *ngIf="isRefreshing" class="spinner-border spinner-border-sm me-2"></span>
+        Refresh
+      </button>
+    </div>
     <div class="table-responsive">
       <table class="table table-hover mb-0">
         <thead>
@@ -34,10 +40,10 @@
             <td>{{ search.searchQuery }}</td>
             <td>{{ search.comments }}</td>
             <td class="text-end">
-              <span *ngIf="search.areResultsUploaded" class="badge bg-success">
-                Results uploaded
-              </span>
-              <button *ngIf="!search.areResultsUploaded" (click)="runSearch(search)" class="btn btn-sm btn-primary">
+              <button *ngIf="search.areResultsUploaded" class="btn btn-sm btn-success" style="min-width: 130px;" disabled>
+                Results Gathered
+              </button>
+              <button *ngIf="!search.areResultsUploaded" (click)="runSearch(search)" class="btn btn-sm btn-primary" style="min-width: 130px;">
                 Gather Results
               </button>
             </td>
@@ -52,3 +58,6 @@
     </div>
   </div>
 </div>
+
+<!-- Gather Results Modal -->
+<app-gather-results-modal #gatherModal></app-gather-results-modal>

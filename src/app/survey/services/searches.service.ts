@@ -21,6 +21,16 @@ export interface CreateSearchRequest {
   comments?: string;
 }
 
+export interface GenerateUploadUrlRequest {
+  limit: number;
+}
+
+export interface GenerateUploadUrlResponse {
+  googleSearchUrl: string;  // camelCase due to interceptor
+  limit: number;
+  expiresIn: number;  // camelCase due to interceptor
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -42,16 +52,9 @@ export class SearchesService {
     return this.http.post<Search>(`/api/surveys/${surveyId}/searches`, searchData);
   }
 
-  // Helper method to generate Google Images search URL
-  generateSearchUrl(search: Search): string {
-    const queryString = encodeURIComponent(search.searchQuery);
-    const morphicId = search.id;
-    return `https://www.google.com/search?q=${queryString}&fg=1&tbm=isch&tbs=itp:photo,morphic_id:${morphicId}`;
-  }
-
-  // Open search in new window
-  runSearch(search: Search): void {
-    const url = this.generateSearchUrl(search);
-    window.open(url, '_blank');
+  // Generate upload URL for gathering results
+  generateUploadUrl(searchId: number, limit: number): Observable<GenerateUploadUrlResponse> {
+    const request: GenerateUploadUrlRequest = { limit };
+    return this.http.post<GenerateUploadUrlResponse>(`/api/searches/${searchId}/generate-upload-url`, request);
   }
 }

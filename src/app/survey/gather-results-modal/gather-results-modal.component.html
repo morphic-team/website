@@ -1,0 +1,76 @@
+<div class="modal fade" #modal tabindex="-1" aria-labelledby="gatherResultsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="gatherResultsModalLabel">Gather Search Results</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Extension Check -->
+        <div *ngIf="!extensionInstalled" class="alert alert-warning">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          <strong>Chrome Extension Required</strong>
+          <p class="mb-2 mt-2">To gather search results, you need to install the Morphic Chrome extension.</p>
+          <a href="https://chrome.google.com/webstore/detail/fhigbmfhhlpkjbdamhjmfajhkfbkkgah" 
+             target="_blank" 
+             class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-download me-1"></i>Install Extension
+          </a>
+        </div>
+
+        <!-- Search Info -->
+        <div class="mb-3">
+          <h6>Search: {{ search?.name }}</h6>
+          <p class="text-muted mb-0">Query: "{{ search?.searchQuery }}"</p>
+        </div>
+
+        <!-- Instructions -->
+        <div class="card bg-light mb-3">
+          <div class="card-body">
+            <h6 class="card-title">How it works:</h6>
+            <ol class="mb-0">
+              <li>Set number of results (100-400 recommended)</li>
+              <li>Click "Gather Results" to open Google Images</li>
+              <li>Extension automatically collects results</li>
+              <li>Use "Return to Morphic" when complete</li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Limit Input -->
+        <div class="mb-3">
+          <label for="resultLimit" class="form-label">Number of results to gather:</label>
+          <input 
+            type="number" 
+            class="form-control" 
+            id="resultLimit" 
+            [(ngModel)]="resultLimit"
+            (ngModelChange)="onLimitChange()"
+            min="1" 
+            max="400"
+            placeholder="100">
+          <div class="form-text">Recommended: 100-400 results</div>
+        </div>
+
+        <!-- Error Display -->
+        <div *ngIf="error" class="alert alert-danger">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          {{ error }}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <a 
+          [href]="googleSearchUrl"
+          target="_blank"
+          class="btn btn-primary" 
+          style="min-width: 140px;"
+          [class.disabled]="isGenerating || !googleSearchUrl || error"
+          (click)="onStartGathering() ? null : $event.preventDefault()">
+          <span *ngIf="isGenerating" class="spinner-border spinner-border-sm me-2" role="status"></span>
+          {{ isGenerating ? 'Generating URL...' : 'Gather Results' }}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,19 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SearchesService, Search } from '../services/searches.service';
 import { StorageService } from '../../services/storage.service';
+import { GatherResultsModalComponent } from '../gather-results-modal/gather-results-modal.component';
 
 @Component({
     selector: 'app-searches-list',
-    imports: [CommonModule, RouterModule],
+    imports: [CommonModule, RouterModule, GatherResultsModalComponent],
     templateUrl: './searches-list.component.html',
     styleUrl: './searches-list.component.css'
 })
 export class SearchesListComponent implements OnInit {
+  @ViewChild('gatherModal') gatherModal!: GatherResultsModalComponent;
+  
   searches: Search[] = [];
   surveyId: string | null = null;
   showExtensionNotice = true;
+  isRefreshing = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -38,16 +42,23 @@ export class SearchesListComponent implements OnInit {
         .subscribe({
           next: (response) => {
             this.searches = response.results;
+            this.isRefreshing = false;
           },
           error: (error) => {
             console.error('Error fetching searches:', error);
+            this.isRefreshing = false;
           }
         });
     }
   }
 
   runSearch(search: Search): void {
-    this.searchesService.runSearch(search);
+    this.gatherModal.show(search);
+  }
+
+  refreshSearches(): void {
+    this.isRefreshing = true;
+    this.fetchSearches();
   }
 
   dismissExtensionNotice(): void {
