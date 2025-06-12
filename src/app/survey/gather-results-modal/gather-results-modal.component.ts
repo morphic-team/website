@@ -133,7 +133,7 @@ export class GatherResultsModalComponent {
   }
   
   get REQUIRED_EXTENSION_VERSION(): string {
-    return this.extensionService.REQUIRED_EXTENSION_VERSION;
+    return this.extensionService.RECOMMENDED_EXTENSION_VERSION;
   }
 
   isChromeBrowser(): boolean {

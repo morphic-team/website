@@ -12,7 +12,8 @@ export interface ExtensionStatus {
   providedIn: 'root'
 })
 export class ExtensionService {
-  readonly REQUIRED_EXTENSION_VERSION = '1.0.0';
+  readonly SUPPORTED_EXTENSION_VERSIONS = ['1.0.0', '1.0.1'];
+  readonly RECOMMENDED_EXTENSION_VERSION = '1.0.0'; // Latest publicly available on CWS
   readonly PRODUCTION_EXTENSION_ID = 'fhigbmfhhlpkjbdamhjmfajhkfbkkgah';
 
   checkExtensionStatus(): Observable<ExtensionStatus> {
@@ -92,7 +93,7 @@ export class ExtensionService {
   }
 
   isVersionValid(version: string): boolean {
-    return version === this.REQUIRED_EXTENSION_VERSION;
+    return this.SUPPORTED_EXTENSION_VERSIONS.includes(version);
   }
 
   isExtensionValid(status: ExtensionStatus): boolean {
