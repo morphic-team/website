@@ -17,7 +17,12 @@ export class GatherResultsModalComponent {
   @ViewChild('modal') modalElement!: ElementRef;
   @Input() search: Search | null = null;
   
-  resultLimit: number = 100;
+  private readonly DEFAULT_RESULT_LIMIT = 100;
+  private readonly MIN_RESULT_LIMIT = 1;
+  private readonly MAX_RESULT_LIMIT = 400;
+  private readonly URL_GENERATION_DEBOUNCE_MS = 500;
+  
+  resultLimit: number = this.DEFAULT_RESULT_LIMIT;
   isGenerating: boolean = false;
   error: string = '';
   extensionStatus: ExtensionStatus = {
@@ -43,7 +48,7 @@ export class GatherResultsModalComponent {
   show(search: Search) {
     this.search = search;
     this.error = '';
-    this.resultLimit = 100;
+    this.resultLimit = this.DEFAULT_RESULT_LIMIT;
     this.googleSearchUrl = '';
     this.modalInstance.show();
     
@@ -94,7 +99,7 @@ export class GatherResultsModalComponent {
     
     this.debounceTimer = setTimeout(() => {
       this.generateUrl();
-    }, 500);
+    }, this.URL_GENERATION_DEBOUNCE_MS);
   }
 
   private validateLimit(): boolean {
@@ -105,13 +110,13 @@ export class GatherResultsModalComponent {
       return false;
     }
     
-    if (this.resultLimit < 1) {
-      this.error = 'Number of results must be at least 1.';
+    if (this.resultLimit < this.MIN_RESULT_LIMIT) {
+      this.error = `Number of results must be at least ${this.MIN_RESULT_LIMIT}.`;
       return false;
     }
     
-    if (this.resultLimit > 400) {
-      this.error = 'Number of results cannot exceed 400.';
+    if (this.resultLimit > this.MAX_RESULT_LIMIT) {
+      this.error = `Number of results cannot exceed ${this.MAX_RESULT_LIMIT}.`;
       return false;
     }
     

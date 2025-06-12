@@ -15,6 +15,8 @@ export class ExtensionService {
   readonly SUPPORTED_EXTENSION_VERSIONS = ['1.0.0', '1.0.1'];
   readonly RECOMMENDED_EXTENSION_VERSION = '1.0.0'; // Latest publicly available on CWS
   readonly PRODUCTION_EXTENSION_ID = 'fhigbmfhhlpkjbdamhjmfajhkfbkkgah';
+  
+  private readonly EXTENSION_CHECK_TIMEOUT_MS = 2000;
 
   checkExtensionStatus(): Observable<ExtensionStatus> {
     const subject = new Subject<ExtensionStatus>();
@@ -48,7 +50,7 @@ export class ExtensionService {
         isChromeBrowser: true
       });
       subject.complete();
-    }, 2000);
+    }, this.EXTENSION_CHECK_TIMEOUT_MS);
 
     // Try to communicate with extension
     if (typeof (window as any).chrome !== 'undefined' && (window as any).chrome.runtime) {
