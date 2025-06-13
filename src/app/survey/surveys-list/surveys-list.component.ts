@@ -2,17 +2,21 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { SurveysService } from '../services/surveys.service'; // Adjust path as needed
+import { ExportModalComponent } from '../export-modal/export-modal.component';
 import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-survey-list',
-    imports: [CommonModule, RouterModule], // Import necessary modules for *ngFor, routing
+    imports: [CommonModule, RouterModule, ExportModalComponent], // Import necessary modules for *ngFor, routing
     templateUrl: './surveys-list.component.html',
     styleUrls: ['./surveys-list.component.css'] // Corrected from 'styleUrl' to 'styleUrls'
 })
 export class SurveyListComponent implements OnInit {
   surveys$: Observable<any[]> | null = null;  // Initialize with null
-
+  
+  // Export modal state
+  showExportModal: boolean = false;
+  selectedSurveyForExport: any = null;
 
   constructor(private surveysService: SurveysService, private router: Router) {}
 
@@ -29,5 +33,15 @@ export class SurveyListComponent implements OnInit {
   createSurvey(): void {
     // Navigate to the survey creation page
     this.router.navigate(['/surveys/create']);
+  }
+
+  openExportModal(survey: any): void {
+    this.selectedSurveyForExport = survey;
+    this.showExportModal = true;
+  }
+
+  closeExportModal(): void {
+    this.showExportModal = false;
+    this.selectedSurveyForExport = null;
   }
 }
