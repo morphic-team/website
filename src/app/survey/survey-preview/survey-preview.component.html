@@ -10,40 +10,27 @@
       </label>
 
       <!-- Text Field -->
-      <input *ngIf="field.fieldType === 'text'" 
-             type="text" 
-             class="form-control" 
-             [id]="field.id"
-             [(ngModel)]="previewValues[field.id]"
-             [name]="field.id"
-             placeholder="Enter text here">
+      <app-morphic-text *ngIf="field.fieldType === 'text'" 
+                        [inputId]="field.id"
+                        [(ngModel)]="previewValues[field.id]"
+                        [name]="field.id">
+      </app-morphic-text>
 
       <!-- Select Field -->
-      <select *ngIf="field.fieldType === 'select'" 
-              class="form-control" 
-              [id]="field.id"
-              [(ngModel)]="previewValues[field.id]"
-              [name]="field.id">
-        <option value="">-- Select an option --</option>
-        <option *ngFor="let option of getOptionsArray(field)" [value]="option">
-          {{ option }}
-        </option>
-      </select>
+      <app-morphic-select *ngIf="field.fieldType === 'select'" 
+                          [inputId]="field.id"
+                          [(ngModel)]="previewValues[field.id]"
+                          [name]="field.id"
+                          [options]="getOptionsArray(field)">
+      </app-morphic-select>
 
       <!-- Radio Field -->
-      <div *ngIf="field.fieldType === 'radio'" class="mb-3">
-        <div *ngFor="let option of getOptionsArray(field); let i = index" class="form-check">
-          <input type="radio" 
-                 class="form-check-input" 
-                 [id]="field.id + '_' + i"
-                 [name]="field.id"
-                 [value]="option"
-                 [(ngModel)]="previewValues[field.id]">
-          <label class="form-check-label" [for]="field.id + '_' + i">
-            {{ option }}
-          </label>
-        </div>
-      </div>
+      <app-morphic-radio *ngIf="field.fieldType === 'radio'" 
+                         [inputId]="field.id"
+                         [(ngModel)]="previewValues[field.id]"
+                         [name]="field.id"
+                         [options]="getOptionsArray(field)">
+      </app-morphic-radio>
 
       <!-- Location Field -->
       <div *ngIf="field.fieldType === 'location'" class="mb-3">

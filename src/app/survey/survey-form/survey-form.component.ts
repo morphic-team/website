@@ -4,10 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { Survey, SurveyField } from '../models/survey.model';
 import { LocationPickerComponent } from '../location-picker/location-picker.component';
 import { LocationData } from '../models/location.model';
+import { MorphicTextComponent } from '../form-fields/morphic-text.component';
+import { MorphicSelectComponent } from '../form-fields/morphic-select.component';
+import { MorphicRadioComponent } from '../form-fields/morphic-radio.component';
 
 @Component({
   selector: 'app-survey-form',
-  imports: [CommonModule, FormsModule, LocationPickerComponent],
+  imports: [CommonModule, FormsModule, LocationPickerComponent, MorphicTextComponent, MorphicSelectComponent, MorphicRadioComponent],
   templateUrl: './survey-form.component.html',
   styleUrls: ['./survey-form.component.css']
 })

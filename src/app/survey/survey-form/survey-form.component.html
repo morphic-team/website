@@ -11,49 +11,36 @@
       </label>
 
       <!-- Text Field -->
-      <input *ngIf="field.fieldType === 'text'" 
-             type="text" 
-             class="form-control" 
-             [ngClass]="{'changed-field': isFieldChanged(field)}"
-             [id]="'field_' + i"
-             [(ngModel)]="formValues[getFieldKey(field)]"
-             [name]="'field_' + i"
-             [disabled]="disabled"
-             (ngModelChange)="onFieldValueChange(field, $event)"
-             placeholder="Enter a response">
+      <app-morphic-text *ngIf="field.fieldType === 'text'" 
+                        [ngClass]="{'changed-field': isFieldChanged(field)}"
+                        [inputId]="'field_' + i"
+                        [(ngModel)]="formValues[getFieldKey(field)]"
+                        [name]="'field_' + i"
+                        [disabled]="disabled"
+                        (ngModelChange)="onFieldValueChange(field, $event)">
+      </app-morphic-text>
 
       <!-- Select Field -->
-      <select *ngIf="field.fieldType === 'select'" 
-              class="form-control" 
-              [ngClass]="{'changed-field': isFieldChanged(field)}"
-              [id]="'field_' + i"
-              [(ngModel)]="formValues[getFieldKey(field)]"
-              [name]="'field_' + i"
-               [disabled]="disabled"
-              (ngModelChange)="onFieldValueChange(field, $event)">
-        <option value="">-- Select an option --</option>
-        <option *ngFor="let option of getOptionsArray(field)" [value]="option">
-          {{ option }}
-        </option>
-      </select>
+      <app-morphic-select *ngIf="field.fieldType === 'select'" 
+                          [ngClass]="{'changed-field': isFieldChanged(field)}"
+                          [inputId]="'field_' + i"
+                          [(ngModel)]="formValues[getFieldKey(field)]"
+                          [name]="'field_' + i"
+                          [disabled]="disabled"
+                          [options]="getOptionsArray(field)"
+                          (ngModelChange)="onFieldValueChange(field, $event)">
+      </app-morphic-select>
 
       <!-- Radio Field -->
-      <div *ngIf="field.fieldType === 'radio'" class="mb-3">
-        <div *ngFor="let option of getOptionsArray(field); let j = index" class="form-check">
-          <input type="radio" 
-                 class="form-check-input" 
-                 [ngClass]="{'changed-field': isFieldChanged(field)}"
-                 [id]="'field_' + i + '_' + j"
-                 [name]="'field_' + i"
-                 [value]="option"
-                 [(ngModel)]="formValues[getFieldKey(field)]"
-                     [disabled]="disabled"
-                 (ngModelChange)="onFieldValueChange(field, $event)">
-          <label class="form-check-label" [for]="'field_' + i + '_' + j">
-            {{ option }}
-          </label>
-        </div>
-      </div>
+      <app-morphic-radio *ngIf="field.fieldType === 'radio'" 
+                         [ngClass]="{'changed-field': isFieldChanged(field)}"
+                         [inputId]="'field_' + i"
+                         [(ngModel)]="formValues[getFieldKey(field)]"
+                         [name]="'field_' + i"
+                         [disabled]="disabled"
+                         [options]="getOptionsArray(field)"
+                         (ngModelChange)="onFieldValueChange(field, $event)">
+      </app-morphic-radio>
 
       <!-- Location Field -->
       <div *ngIf="field.fieldType === 'location'" class="form-group">

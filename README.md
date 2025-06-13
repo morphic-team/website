@@ -25,3 +25,15 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## Architecture Decisions
+
+### Form Field Components
+
+The application uses custom form field wrapper components (`morphic-text`, `morphic-select`, `morphic-radio`) instead of native HTML form elements. This design provides:
+
+1. **Consistent null handling**: All fields use `null` to represent "not set" in the data layer, with conversion to HTML-expected values (empty string, undefined) happening only at the component boundary
+2. **Clear API contracts**: Required inputs use Angular's `@Input({ required: true })` to fail fast with clear errors
+3. **Future extensibility**: Custom components can be enhanced with validation, tooltips, error states, etc.
+
+This approach maintains data consistency throughout the application stack while properly handling the impedance mismatch between TypeScript/database representations and HTML form behavior.
