@@ -231,6 +231,18 @@
               </div>
           </div>
           <div class="card-body">
+            <!-- Form Controls (Top) -->
+            <app-search-result-form-controls
+              [hasUnsavedChanges]="hasUnsavedChanges"
+              [saving]="saving"
+              [hasNext]="hasNext"
+              (revertChanges)="revertChanges()"
+              (saveForm)="saveForm()"
+              (saveAndNext)="saveAndNext($event)">
+            </app-search-result-form-controls>
+            
+            <hr class="my-3">
+            
             <!-- Completion State Selector -->
             <div class="mb-3">
               <label for="completionState" class="form-label">
@@ -250,7 +262,7 @@
                 <option value="NOT_USABLE">Not Usable</option>
               </select>
             </div>
-
+            
             <app-survey-form
               [survey]="survey"
               [initialValues]="getInitialFormValues()"
@@ -261,39 +273,16 @@
               (fieldChange)="onFieldChange($event)">
             </app-survey-form>
             
-            <!-- Form Actions -->
-            <div class="d-flex justify-content-end align-items-center gap-2 mt-4 pt-3 border-top">
-              <button type="button" 
-                      class="btn btn-primary btn-sm" 
-                      (click)="saveForm()" 
-                      [disabled]="!hasUnsavedChanges || saving"
-                      title="Save form data and completion state">
-                {{ saving ? 'Saving...' : 'Save Changes' }}
-              </button>
-              <div class="btn-group" role="group">
-                <button type="button" 
-                        class="btn btn-danger btn-sm" 
-                        (click)="saveAndNext('NOT_USABLE')" 
-                        [disabled]="!hasNext || saving"
-                        title="Set completion state to not usable, save changes and navigate to next result">
-                  {{ saving ? 'Saving...' : 'Not Usable & Next' }}
-                </button>
-                <button type="button" 
-                        class="btn btn-warning btn-sm" 
-                        (click)="saveAndNext('REVISIT')" 
-                        [disabled]="!hasNext || saving"
-                        title="Set completion state to revisit, save changes and navigate to next result">
-                  {{ saving ? 'Saving...' : 'Revisit & Next' }}
-                </button>
-                <button type="button" 
-                        class="btn btn-success btn-sm" 
-                        (click)="saveAndNext('DONE')" 
-                        [disabled]="!hasNext || saving"
-                        title="Set completion state to done, save changes and navigate to next result">
-                  {{ saving ? 'Saving...' : 'Done & Next' }}
-                </button>
-              </div>
-            </div>
+            <!-- Form Controls (Bottom) -->
+            <hr class="mt-4">
+            <app-search-result-form-controls
+              [hasUnsavedChanges]="hasUnsavedChanges"
+              [saving]="saving"
+              [hasNext]="hasNext"
+              (revertChanges)="revertChanges()"
+              (saveForm)="saveForm()"
+              (saveAndNext)="saveAndNext($event)">
+            </app-search-result-form-controls>
           </div>
         </div>
       </div>

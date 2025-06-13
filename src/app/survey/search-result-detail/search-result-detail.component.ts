@@ -7,11 +7,12 @@ import { SearchResultsService } from '../services/search-results.service';
 import { SurveysService } from '../services/surveys.service';
 import { Survey } from '../models/survey.model';
 import { SurveyFormComponent } from '../survey-form/survey-form.component';
+import { SearchResultFormControlsComponent } from '../search-result-form-controls/search-result-form-controls.component';
 import { CanComponentDeactivate } from '../guards/unsaved-changes.guard';
 
 @Component({
     selector: 'app-search-result-detail',
-    imports: [CommonModule, FormsModule, RouterModule, SurveyFormComponent],
+    imports: [CommonModule, FormsModule, RouterModule, SurveyFormComponent, SearchResultFormControlsComponent],
     templateUrl: './search-result-detail.component.html',
     styleUrl: './search-result-detail.component.css'
 })
