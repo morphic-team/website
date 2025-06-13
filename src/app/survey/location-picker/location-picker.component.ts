@@ -70,10 +70,66 @@ export class LocationPickerComponent implements OnInit, AfterViewInit, OnDestroy
       defaultZoom
     );
 
-    // Add OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 18,
+    // Define base layers - all free providers
+    const osmStandard = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
       attribution: '© OpenStreetMap contributors'
+    });
+
+    const osmHot = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors, Tiles style by Humanitarian OpenStreetMap Team'
+    });
+
+    const openTopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+      maxZoom: 17,
+      attribution: '© OpenStreetMap contributors, © OpenTopoMap'
+    });
+
+    const esriWorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 19,
+      attribution: '© Esri, DigitalGlobe, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community'
+    });
+
+    const esriWorldTopoMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 19,
+      attribution: '© Esri, HERE, Garmin, © OpenStreetMap contributors, and the GIS User Community'
+    });
+
+    const cartoDBPositron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors © CARTO'
+    });
+
+    const cartoDBDarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors © CARTO'
+    });
+
+    const stamenTerrain = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}{r}.png', {
+      maxZoom: 18,
+      attribution: '© Stamen Design, © OpenStreetMap contributors'
+    });
+
+    // Set default layer
+    osmStandard.addTo(this.map);
+
+    // Create base layers object for layer control
+    const baseLayers = {
+      "OpenStreetMap": osmStandard,
+      "OSM Humanitarian": osmHot,
+      "OpenTopoMap": openTopoMap,
+      "Satellite (Esri)": esriWorldImagery,
+      "Esri WorldTopoMap": esriWorldTopoMap,
+      "CartoDB Positron": cartoDBPositron,
+      "CartoDB Dark": cartoDBDarkMatter,
+      "Stamen Terrain": stamenTerrain
+    };
+
+    // Add layer control to the map
+    L.control.layers(baseLayers, {}, {
+      position: 'topright',
+      collapsed: true
     }).addTo(this.map);
 
     // Add geocoder search control (if not disabled)
