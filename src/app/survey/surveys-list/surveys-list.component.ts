@@ -44,4 +44,10 @@ export class SurveyListComponent implements OnInit {
     this.showExportModal = false;
     this.selectedSurveyForExport = null;
   }
+
+  archiveSurvey(survey: any): void {
+    // Stub for archive functionality
+    console.log('Archive survey:', survey.name);
+    alert(`Archive functionality coming soon for: ${survey.name}`);
+  }
 }

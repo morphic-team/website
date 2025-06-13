@@ -35,36 +35,39 @@
               <tr>
                 <th>Name</th>
                 <th>Description</th>
-                <th width="100">Actions</th>
+                <th width="100" class="text-end">Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let survey of surveys">
+              <tr *ngFor="let survey of surveys" 
+                  [routerLink]="['/surveys', survey.id]"
+                  style="cursor: pointer">
                 <td>
                   <span class="fw-semibold">{{ survey.name }}</span>
                 </td>
                 <td>{{ survey.comments }}</td>
-                <td>
+                <td (click)="$event.stopPropagation()" class="text-end">
                   <div class="dropdown">
-                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle dropdown-toggle-no-arrow" 
                             type="button" 
                             [id]="'dropdownMenuButton' + survey.id" 
                             data-bs-toggle="dropdown" 
                             aria-expanded="false">
-                      <i class="fa fa-ellipsis-v"></i>
+                      <i class="bi bi-three-dots-vertical"></i>
                     </button>
                     <ul class="dropdown-menu" [attr.aria-labelledby]="'dropdownMenuButton' + survey.id">
                       <li>
                         <a class="dropdown-item" 
-                           [routerLink]="['/surveys', survey.id]">
-                          <i class="fa fa-eye me-2"></i>View Survey
+                           href="#" 
+                           (click)="openExportModal(survey); $event.preventDefault()">
+                          <i class="bi bi-download me-2"></i>Export Data
                         </a>
                       </li>
                       <li>
                         <a class="dropdown-item" 
                            href="#" 
-                           (click)="openExportModal(survey); $event.preventDefault()">
-                          <i class="fa fa-download me-2"></i>Export Data
+                           (click)="archiveSurvey(survey); $event.preventDefault()">
+                          <i class="bi bi-archive me-2"></i>Archive
                         </a>
                       </li>
                     </ul>

@@ -114,7 +114,7 @@
                   <td class="text-start">
                     <a [href]="searchResult.visibleLink" target="_blank" class="text-break link-external">
                       {{ getDisplayUrl(searchResult.visibleLink) }}
-                      <i class="fa fa-external-link-alt ms-1" aria-hidden="true"></i>
+                      <i class="bi bi-box-arrow-up-right ms-1" aria-hidden="true"></i>
                     </a>
                   </td>
                 </tr>
@@ -218,7 +218,7 @@
             <h5 class="mb-0">Survey for Search Result #{{ searchResult.id }}</h5>
             <div *ngIf="hasUnsavedChanges" class="d-flex align-items-center gap-2">
                 <span class="text-warning">
-                  <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                  <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
                   Unsaved changes
                 </span>
                 <button type="button" 

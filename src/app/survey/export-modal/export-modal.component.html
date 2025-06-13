@@ -55,7 +55,7 @@
           </div>
 
           <div *ngIf="resultsCount === 0" class="alert alert-info">
-            <i class="fa fa-info-circle me-2"></i>
+            <i class="bi bi-info-circle me-2"></i>
             No results to export yet. Complete some search results first.
           </div>
         </div>
@@ -74,7 +74,7 @@
                 (click)="downloadCSV()"
                 [disabled]="isDownloading || resultsCount === 0 || isLoading">
           <span *ngIf="!isDownloading">
-            <i class="fa fa-download me-2"></i>
+            <i class="bi bi-download me-2"></i>
             Download CSV
           </span>
           <span *ngIf="isDownloading">
