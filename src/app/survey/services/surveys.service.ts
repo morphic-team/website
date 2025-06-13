@@ -18,11 +18,12 @@ export class SurveysService {
   }
 
   // Refresh surveys list for the current user
-  refresh(): Observable<any[]> {
+  refresh(includeArchived: boolean = false): Observable<any[]> {
     return this.userService.getUser().pipe(
       switchMap(user => {
-        // Make API call to get surveys for the user
-        return this.http.get<any>(`/api/users/${user.id}/surveys`);
+        // Make API call to get surveys for the user with archived filter
+        const params = includeArchived ? '?is_archived=true' : '';
+        return this.http.get<any>(`/api/users/${user.id}/surveys${params}`);
       }),
       map(response => {
         // Extract the surveys from the 'results' property in the API response
@@ -47,6 +48,20 @@ export class SurveysService {
   exportResults(surveyId: string): Observable<Blob> {
     return this.http.get(`/api/surveys/${surveyId}/export-results`, {
       responseType: 'blob'
+    });
+  }
+
+  // Archive a survey
+  archiveSurvey(surveyId: number): Observable<any> {
+    return this.http.patch(`/api/surveys/${surveyId}`, { 
+      is_archived: true 
+    });
+  }
+
+  // Unarchive a survey
+  unarchiveSurvey(surveyId: number): Observable<any> {
+    return this.http.patch(`/api/surveys/${surveyId}`, { 
+      is_archived: false 
     });
   }
 }
