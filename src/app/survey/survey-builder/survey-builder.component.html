@@ -1,5 +1,16 @@
 <div class="survey-builder">
         
+        <!-- Survey Immutability Warning -->
+        <div *ngIf="shouldShowWarning" class="alert alert-info alert-dismissible fade show" role="alert">
+          <strong>Important:</strong> Once you create this survey, you will not be able to edit or modify its fields. 
+          Please carefully consider which form fields you need before finalizing your survey.
+          <button type="button" 
+                  class="btn-close" 
+                  aria-label="Close"
+                  (click)="dismissWarning()">
+          </button>
+        </div>
+        
         <!-- Existing Fields List -->
         <div class="mb-4" *ngIf="survey.fields.length > 0">
           <div class="list-group">

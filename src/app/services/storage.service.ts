@@ -54,6 +54,7 @@ export interface UserPreferences {
   dismissedExtensionNotice?: boolean;
   dismissedExtensionVersion?: string; // Track which version was dismissed
   lastSeenExtensionStatus?: 'missing' | 'installed'; // Track extension state changes
+  dismissedSurveyBuilderWarning?: boolean; // Track if user has dismissed the immutable survey warning
   // Add other preferences here as needed
 }
 

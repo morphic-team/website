@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Survey, SurveyField, FIELD_TYPES, FieldType } from '../models/survey.model';
+import { StorageService } from '../../services/storage.service';
 
 @Component({
   selector: 'app-survey-builder',
@@ -30,7 +31,16 @@ export class SurveyBuilderComponent {
 
   showAddFieldForm = false;
 
-  constructor() {}
+  constructor(private storageService: StorageService) {}
+
+  get shouldShowWarning(): boolean {
+    const preferences = this.storageService.getUserPreferences();
+    return !preferences.dismissedSurveyBuilderWarning;
+  }
+
+  dismissWarning(): void {
+    this.storageService.updateUserPreference('dismissedSurveyBuilderWarning', true);
+  }
 
   onSurveyChange() {
     this.surveyChange.emit(this.survey);
