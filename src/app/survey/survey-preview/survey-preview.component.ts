@@ -26,6 +26,9 @@ export class SurveyPreviewComponent {
 
   getOptionsArray(field: SurveyField): string[] {
     if (!field.options) return [];
+    if (Array.isArray(field.options)) {
+      return field.options;
+    }
     return field.options.split(',').map(option => option.trim()).filter(option => option.length > 0);
   }
 }

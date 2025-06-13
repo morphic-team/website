@@ -16,16 +16,14 @@
              [id]="field.id"
              [(ngModel)]="previewValues[field.id]"
              [name]="field.id"
-             placeholder="Enter text here"
-             disabled>
+             placeholder="Enter text here">
 
       <!-- Select Field -->
       <select *ngIf="field.fieldType === 'select'" 
               class="form-control" 
               [id]="field.id"
               [(ngModel)]="previewValues[field.id]"
-              [name]="field.id"
-               disabled>
+              [name]="field.id">
         <option value="">-- Select an option --</option>
         <option *ngFor="let option of getOptionsArray(field)" [value]="option">
           {{ option }}
@@ -40,8 +38,7 @@
                  [id]="field.id + '_' + i"
                  [name]="field.id"
                  [value]="option"
-                 [(ngModel)]="previewValues[field.id]"
-                     disabled>
+                 [(ngModel)]="previewValues[field.id]">
           <label class="form-check-label" [for]="field.id + '_' + i">
             {{ option }}
           </label>
@@ -53,8 +50,7 @@
         <app-location-picker
           [options]="{
             height: '250px',
-            defaultLocation: previewValues[field.id] || null,
-            disabled: true
+            defaultLocation: previewValues[field.id] || null
           }"
           [(ngModel)]="previewValues[field.id]"
           [name]="field.id">

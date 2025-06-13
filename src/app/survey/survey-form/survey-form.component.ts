@@ -72,7 +72,7 @@ export class SurveyFormComponent implements OnInit {
     this.onFormValueChange();
   }
 
-  getOptionsArray(field: any): string[] {
+  getOptionsArray(field: SurveyField): string[] {
     if (!field.options) return [];
     if (Array.isArray(field.options)) {
       return field.options;

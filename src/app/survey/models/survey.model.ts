@@ -10,7 +10,7 @@ export interface SurveyField {
   id: string;
   label: string;
   fieldType: 'text' | 'select' | 'radio' | 'location';
-  options?: string; // comma-separated options for select/radio
+  options?: string | string[]; // comma-separated string during creation, array when loaded from backend
   order: number;
 }
 
