@@ -21,6 +21,7 @@ export class ExtensionService {
   checkExtensionStatus(): Observable<ExtensionStatus> {
     const subject = new Subject<ExtensionStatus>();
     
+    
     // Check if Chrome browser
     if (!this.isChromeBrowser()) {
       subject.next({
@@ -58,32 +59,39 @@ export class ExtensionService {
         clearTimeout(timeoutId);
         
         if ((window as any).chrome.runtime.lastError || !response) {
-          subject.next({
-            isChecking: false,
-            isInstalled: false,
-            version: '',
-            isChromeBrowser: true
-          });
+          // Extension failed to respond - use setTimeout for timing fix
+          setTimeout(() => {
+            subject.next({
+              isChecking: false,
+              isInstalled: false,
+              version: '',
+              isChromeBrowser: true
+            });
+            subject.complete();
+          }, 0);
         } else {
+          // Extension responded successfully - emit immediately
           subject.next({
             isChecking: false,
             isInstalled: true,
             version: response.version || '',
             isChromeBrowser: true
           });
+          subject.complete();
         }
-        subject.complete();
       });
     } else {
-      // No Chrome runtime
+      // No Chrome runtime available - use setTimeout for timing fix
       clearTimeout(timeoutId);
-      subject.next({
-        isChecking: false,
-        isInstalled: false,
-        version: '',
-        isChromeBrowser: true
-      });
-      subject.complete();
+      setTimeout(() => {
+        subject.next({
+          isChecking: false,
+          isInstalled: false,
+          version: '',
+          isChromeBrowser: true
+        });
+        subject.complete();
+      }, 0);
     }
 
     return subject.asObservable();

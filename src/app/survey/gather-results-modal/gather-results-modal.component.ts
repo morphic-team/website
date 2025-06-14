@@ -156,11 +156,8 @@ export class GatherResultsModalComponent {
 
     this.searchesService.generateUploadUrl(this.search.id, this.resultLimit).subscribe({
       next: (response) => {
-        console.log('Generated URL response:', response);
         this.googleSearchUrl = response.googleSearchUrl;  // camelCase!
         this.isGenerating = false;
-        console.log('URL set to:', this.googleSearchUrl);
-        console.log('isGenerating:', this.isGenerating);
       },
       error: (error) => {
         console.error('Error generating upload URL:', error);
