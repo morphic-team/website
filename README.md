@@ -1,4 +1,43 @@
-# Morphic Website
+# ⚠️ ARCHIVED: Morphic Website
+
+**This repository has been archived and moved to the main Morphic monorepo.**
+
+**🔗 New Location**: [morphic/website/](https://github.com/morphic-team/morphic/tree/main/website)
+
+---
+
+## Migration Notice
+
+As of January 15, 2025, the Morphic Website has been:
+
+- **Migrated** to the main Morphic monorepo at `morphic/website/`
+- **Enhanced** with unified development workflow and deployment pipeline
+
+### What Changed
+
+- **New Location**: Development now happens in the [main Morphic repository](https://github.com/morphic-team/morphic)
+- **New Path**: `website/` directory within the monorepo
+- **Enhanced Features**: Unified tooling and cross-component coordination
+
+### For Developers
+
+To continue development:
+
+1. Clone the main monorepo: `git clone git@github.com:morphic-team/morphic.git`
+2. Navigate to: `cd morphic/website/`
+3. Follow the updated documentation in the monorepo
+
+### Why This Change
+
+Moving to a monorepo provides:
+- **Unified Development**: All Morphic components in one place
+- **Better Coordination**: Easier cross-component changes
+- **Simplified Deployment**: Streamlined CI/CD and release management
+- **Improved Developer Experience**: Single clone, unified tooling
+
+---
+
+## Legacy Information
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.8.
 
